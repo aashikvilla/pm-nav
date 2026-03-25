@@ -95,6 +95,7 @@ model Profile {
   bio                 String?  @db.Text
   onboardingCompleted Boolean  @default(false) @map("onboarding_completed")
   onboardingStep      Int      @default(0) @map("onboarding_step")
+  analysisStatus      String   @default("pending") @map("analysis_status") // pending | processing | completed | failed
   profileSlug         String?  @unique @map("profile_slug")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
