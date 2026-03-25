@@ -5,7 +5,7 @@
  * Seeds: skill categories, skills, role weights, learning stages, question bank
  */
 
-import { PrismaClient } from "../src/generated/prisma"
+import { PrismaClient } from "../src/generated/prisma/client"
 
 const prisma = new PrismaClient()
 
