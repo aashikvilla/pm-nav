@@ -1,4 +1,10 @@
-import { claudeChat } from "@/lib/ai/anthropic"
+// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
+// Rationale: PSI reframing is the most nuanced task in the pipeline — it must
+// interpret ambiguous work bullets through a PM lens, distinguish business/user
+// problems from technical tasks, and write compelling problem-solution-impact
+// narratives. Hermes 3 405B's fine-tuning for "advanced reasoning and roleplaying"
+// makes it the strongest free model for this kind of domain-specific creative rewriting.
+import { orChat, MODELS } from "@/lib/ai/openrouter"
 
 interface WorkBullet {
   company: string
@@ -36,9 +42,14 @@ ${bullet.context ? `Additional context: ${bullet.context}` : ""}
 
 Return JSON: {"problem":string,"solution":string,"impact":string,"confidenceScore":number,"skillsHinted":string[]}`
 
-  const response = await claudeChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }])
+  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    model: MODELS.REASONING,
+  })
+
   try {
-    return JSON.parse(response) as PsiResult
+    const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+    const jsonStr = jsonMatch ? jsonMatch[1] : response.trim()
+    return JSON.parse(jsonStr) as PsiResult
   } catch {
     throw new Error("Failed to parse PSI JSON from AI response")
   }

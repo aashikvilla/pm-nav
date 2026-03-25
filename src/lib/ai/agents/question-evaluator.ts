@@ -1,4 +1,10 @@
-import { claudeChat } from "@/lib/ai/anthropic"
+// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
+// Rationale: PM interview answer evaluation requires understanding what "good"
+// looks like in PM interviews across 7 question categories (product sense,
+// analytical, strategy, behavioral, technical, estimation, execution). Hermes
+// 405B's deep reasoning gives it the ability to identify nuanced PM thinking
+// patterns that distinguish strong answers from surface-level ones.
+import { orChat, MODELS } from "@/lib/ai/openrouter"
 
 interface QuestionEvalInput {
   question: string
@@ -36,10 +42,15 @@ ${input.userResponse}
 
 Return JSON: {"totalScore":number,"breakdown":[{"criterion":string,"score":number,"maxPoints":number,"comment":string}],"feedback":string,"missedKeyPoints":string[],"strongPoints":string[]}`
 
-  const response = await claudeChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }])
+  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    model: MODELS.REASONING,
+  })
+
   try {
-    return JSON.parse(response) as QuestionEvalResult
+    const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+    const jsonStr = jsonMatch ? jsonMatch[1] : response.trim()
+    return JSON.parse(jsonStr) as QuestionEvalResult
   } catch {
-    throw new Error("Failed to parse question evaluation JSON")
+    throw new Error("Failed to parse question evaluation JSON from AI response: " + response)
   }
 }

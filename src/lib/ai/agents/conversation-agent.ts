@@ -1,4 +1,10 @@
-import { claudeChat } from "@/lib/ai/anthropic"
+// Model: STRUCTURED (meta-llama/llama-3.3-70b-instruct:free)
+// Rationale: The gap-fill conversation is real-time (user is waiting). Llama 3.3
+// 70B is explicitly optimised for "multilingual dialogue use cases" and is
+// significantly faster than the 405B model — critical for interactive chat UX.
+// It reliably follows the structured instruction format (PSI extraction tags,
+// [COMPLETE] signal) while maintaining warm, coaching-style conversation.
+import { orChat, MODELS } from "@/lib/ai/openrouter"
 
 export interface PsiSignal {
   problem: string
@@ -61,7 +67,7 @@ Candidate context:
     { role: "user", content: input.userMessage },
   ]
 
-  const response = await claudeChat(systemPrompt, messages)
+  const response = await orChat(systemPrompt, messages, { model: MODELS.STRUCTURED })
 
   const isComplete = response.includes("[COMPLETE]")
 
@@ -69,7 +75,9 @@ Candidate context:
   const psiMatches = response.matchAll(/<psi>([\s\S]*?)<\/psi>/g)
   for (const match of psiMatches) {
     try {
-      const signal = JSON.parse(match[1]) as PsiSignal
+      const jsonMatch = match[1].match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+      const jsonStr = jsonMatch ? jsonMatch[1] : match[1].trim()
+      const signal = JSON.parse(jsonStr) as PsiSignal
       newPsiSignals.push(signal)
     } catch {
       // ignore malformed PSI

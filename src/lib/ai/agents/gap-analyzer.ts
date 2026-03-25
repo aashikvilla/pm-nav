@@ -1,4 +1,10 @@
-import { claudeChat } from "@/lib/ai/anthropic"
+// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
+// Rationale: Gap analysis requires calibrated 0-100 scoring across 10 PM skill
+// dimensions simultaneously, drawing inferences from multiple PSI entries. This
+// demands the strongest available reasoning — getting these scores wrong cascades
+// into the entire learning path. Hermes 3 405B provides the analytical depth
+// needed for honest, well-calibrated PM readiness assessment.
+import { orChat, MODELS } from "@/lib/ai/openrouter"
 
 interface GapAnalysisInput {
   psiEntries: { problem: string; solution: string; impact: string; skillsHinted: string[] }[]
@@ -38,9 +44,14 @@ ${entriesSummary}
 
 Return JSON: {"skillScores":{"slug":number},"topStrengths":string[],"topGaps":string[],"summary":string,"recommendedStages":number[]}`
 
-  const response = await claudeChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }])
+  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    model: MODELS.REASONING,
+  })
+
   try {
-    return JSON.parse(response) as GapAnalysisResult
+    const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+    const jsonStr = jsonMatch ? jsonMatch[1] : response.trim()
+    return JSON.parse(jsonStr) as GapAnalysisResult
   } catch {
     throw new Error("Failed to parse gap analysis JSON")
   }

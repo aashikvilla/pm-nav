@@ -1,4 +1,10 @@
-import { gptChat } from "@/lib/ai/openai"
+// Model: STRUCTURED (meta-llama/llama-3.3-70b-instruct:free)
+// Rationale: Resume optimisation is a structured transformation task — convert
+// PSI entries into ATS-compliant bullets that match JD keywords and PM vocabulary.
+// Llama 3.3 70B excels at precisely following complex transformation instructions
+// and keyword matching patterns, making it the right balance of capability and
+// speed for this batch-oriented, less time-sensitive task.
+import { orChat, MODELS } from "@/lib/ai/openrouter"
 
 interface ResumeOptimizeInput {
   psiEntries: { problem: string; solution: string; impact: string }[]
@@ -35,10 +41,16 @@ ${psiText}
 
 Return JSON: {"bullets":[{"original":string,"optimized":string,"keywords":string[]}],"summary":string,"atsScore":number,"keywordMatch":{"matched":string[],"missing":string[]}}`
 
-  const response = await gptChat(SYSTEM_PROMPT, prompt, { maxTokens: 4096 })
+  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    model: MODELS.STRUCTURED,
+    maxTokens: 4096,
+  })
+
   try {
-    return JSON.parse(response) as ResumeOptimizeResult
+    const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+    const jsonStr = jsonMatch ? jsonMatch[1] : response.trim()
+    return JSON.parse(jsonStr) as ResumeOptimizeResult
   } catch {
-    throw new Error("Failed to parse resume optimize JSON")
+    throw new Error("Failed to parse resume optimize JSON from AI response: " + response)
   }
 }

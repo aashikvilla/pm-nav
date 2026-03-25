@@ -1,4 +1,9 @@
-import { claudeChat } from "@/lib/ai/anthropic"
+// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
+// Rationale: Assignment evaluation requires genuine PM domain expertise to score
+// submissions against nuanced rubric criteria. A 70B model may miss subtle PM
+// thinking patterns; the 405B Hermes model's depth gives it the judgment needed
+// to provide accurate, actionable feedback that mirrors a senior PM hiring manager.
+import { orChat, MODELS } from "@/lib/ai/openrouter"
 
 interface EvaluationInput {
   assignmentTitle: string
@@ -43,10 +48,15 @@ Evaluate and return JSON: {
   "improvementAreas": string[]
 }`
 
-  const response = await claudeChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }])
+  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    model: MODELS.REASONING,
+  })
+
   try {
-    return JSON.parse(response) as EvaluationResult
+    const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+    const jsonStr = jsonMatch ? jsonMatch[1] : response.trim()
+    return JSON.parse(jsonStr) as EvaluationResult
   } catch {
-    throw new Error("Failed to parse evaluation JSON")
+    throw new Error("Failed to parse evaluation JSON from AI response: " + response)
   }
 }
