@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Learning Path | Loomis Career Strategy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#ffdbcc",
+              "on-error": "#ffffff",
+              "tertiary-container": "#a44100",
+              "tertiary-fixed-dim": "#ffb695",
+              "on-tertiary-fixed": "#351000",
+              "primary-fixed-dim": "#c3c0ff",
+              "surface-container-high": "#e7e8e9",
+              "secondary-fixed-dim": "#ffb95f",
+              "primary-fixed": "#e2dfff",
+              "surface-dim": "#d9dadb",
+              "on-secondary-fixed": "#2a1700",
+              "on-tertiary": "#ffffff",
+              "on-surface": "#191c1d",
+              "primary": "#3525cd",
+              "secondary-fixed": "#ffddb8",
+              "on-surface-variant": "#464555",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#e1e3e4",
+              "secondary": "#855300",
+              "surface-container-low": "#f3f4f5",
+              "secondary-container": "#fea619",
+              "on-primary-fixed": "#0f0069",
+              "surface-bright": "#f8f9fa",
+              "background": "#f8f9fa",
+              "surface-tint": "#4d44e3",
+              "outline-variant": "#c7c4d8",
+              "on-secondary-fixed-variant": "#653e00",
+              "error-container": "#ffdad6",
+              "on-tertiary-container": "#ffd2be",
+              "on-background": "#191c1d",
+              "surface-variant": "#e1e3e4",
+              "surface": "#f8f9fa",
+              "on-primary-fixed-variant": "#3323cc",
+              "primary-container": "#4f46e5",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "outline": "#777587",
+              "inverse-surface": "#2e3132",
+              "inverse-on-surface": "#f0f1f2",
+              "on-primary-container": "#dad7ff",
+              "on-tertiary-fixed-variant": "#7b2f00",
+              "on-secondary-container": "#684000",
+              "tertiary": "#7e3000",
+              "surface-container": "#edeeef",
+              "inverse-primary": "#c3c0ff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between px-6 h-16 font-['Inter'] antialiased">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Loomis</span>
+<nav class="hidden md:flex items-center space-gap-6 gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 ease-out text-sm font-medium" href="#">Dashboard</a>
+<a class="text-indigo-600 dark:text-indigo-400 font-semibold transition-colors duration-200 ease-out text-sm font-medium" href="#">Learning Path</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 ease-out text-sm font-medium" href="#">Resume Builder</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 ease-out text-sm font-medium" href="#">Question Bank</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-secondary-fixed/20 px-3 py-1 rounded-full gap-2">
+<span class="material-symbols-outlined text-secondary text-lg" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-on-secondary-fixed text-xs font-bold tracking-tight">5-DAY STREAK</span>
+</div>
+<button class="material-symbols-outlined text-slate-500 hover:text-slate-900 transition-colors">notifications</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant/30" data-alt="close-up portrait of a professional woman with a friendly expression in a modern office environment with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ8BQuPdvC5eSgR1jEY3me1q513-oPJH2QgDSkFdwKaAbalscJrdwSpMZVpwZ-d8XvT1Y_vdsywqzayDl4fkjXKOak98HP1H4fiqWJAeNpvV2XadlwU5loiTLB_oQfYpC0Dt9N6ZKdOFvNmrQVCpMt29apoP5zlFi-z5r79_8NYCQhI-PAZf2INKLuw3P-UfKKizixaVxdiCGMnbt9npPKTIaHd27B6Bx0Qp0ixWMSZ9kzQiljKNq6Sl7vL5rYZjev2uDCCGsRzKv7"/>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 h-full w-64 z-50 bg-slate-50 dark:bg-slate-950 hidden lg:flex flex-col p-4 space-y-2 font-['Inter'] text-sm font-medium">
+<div class="mb-8 px-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<div>
+<h2 class="text-lg font-black tracking-tighter text-indigo-700 dark:text-indigo-500 leading-none">Loomis</h2>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Career Strategy</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200 active:opacity-80" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm rounded-lg hover:translate-x-1 transition-transform duration-200 active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                Learning Path
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200 active:opacity-80" href="#">
+<span class="material-symbols-outlined">description</span>
+                Resume Builder
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200 active:opacity-80" href="#">
+<span class="material-symbols-outlined">quiz</span>
+                Question Bank
+            </a>
+</nav>
+<div class="pt-4 border-t border-slate-200/50">
+<button class="w-full bg-primary text-on-primary py-2.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mb-6">
+                New Strategy
+            </button>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="lg:ml-64 pt-24 pb-12 px-6 md:px-12 max-w-6xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="label-md text-primary font-bold tracking-[0.1em] uppercase block mb-2">Curated Roadmap</span>
+<h1 class="text-[2.75rem] font-black tracking-tighter leading-none text-on-surface">Product Strategy Mastery</h1>
+<p class="text-on-surface-variant mt-4 max-w-xl text-lg leading-relaxed">Your personalized sequence to mastering high-impact product management. Focused on data-driven decision making and execution.</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-xl">
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Global Progress</p>
+<p class="text-2xl font-black text-primary">62%</p>
+</div>
+<div class="w-16 h-16 rounded-full border-4 border-outline-variant/20 flex items-center justify-center relative">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle class="text-primary" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="176" stroke-dashoffset="67" stroke-width="4"></circle>
+</svg>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Learning Timeline -->
+<div class="relative">
+<!-- Asymmetric Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+<!-- Timeline Column -->
+<div class="md:col-span-8 space-y-12">
+<!-- Stage 1: Completed -->
+<section class="group relative flex gap-8">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white z-10 shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+<div class="w-0.5 h-full bg-primary/20 mt-2 absolute top-10 left-5 -z-0"></div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg w-full transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Stage 1</span>
+<h3 class="text-xl font-bold text-on-surface">Foundations of Product Logic</h3>
+</div>
+<span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full">COMPLETED</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4">Master the core principles of the Loomis Strategy framework and standard PM mental models.</p>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Completed on Oct 12, 2023
+                            </div>
+</div>
+</section>
+<!-- Stage 2: Completed -->
+<section class="group relative flex gap-8">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white z-10 shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+<div class="w-0.5 h-full bg-primary/20 mt-2 absolute top-10 left-5 -z-0"></div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg w-full transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Stage 2</span>
+<h3 class="text-xl font-bold text-on-surface">Market Discovery &amp; User Research</h3>
+</div>
+<span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full">COMPLETED</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4">Deep dive into identifying underserved market needs and creating high-fidelity user personas.</p>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Completed on Oct 28, 2023
+                            </div>
+</div>
+</section>
+<!-- Stage 3: In Progress -->
+<section class="group relative flex gap-8">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-white border-4 border-primary flex items-center justify-center text-primary z-10 shadow-lg">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+</div>
+<div class="w-0.5 h-full border-l-2 border-dashed border-outline-variant/40 mt-2 absolute top-10 left-5 -z-0"></div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-lg w-full shadow-sm border border-primary/10 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4">
+<div class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-black px-4 py-1.5 rounded-full shadow-sm">IN PROGRESS</div>
+</div>
+<div class="mb-8">
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Stage 3</span>
+<h3 class="text-2xl font-black text-on-surface mt-1">Data-Driven Decision Making</h3>
+<p class="text-on-surface-variant mt-2 text-md">Translating qualitative insights into quantitative roadmap priorities.</p>
+</div>
+<div class="space-y-4">
+<!-- Sub-topic 1 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant/10 bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-lg">analytics</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Defining Success Metrics</h4>
+<p class="text-[11px] text-on-surface-variant">25 min • Reading &amp; Exercise</p>
+</div>
+</div>
+<button class="bg-primary text-white px-5 py-2 rounded-full text-xs font-bold hover:scale-105 transition-transform">Resume</button>
+</div>
+<!-- Sub-topic 2 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant/10 bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">filter_alt</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Funnel Analysis</h4>
+<p class="text-[11px] text-on-surface-variant">45 min • Interactive Workshop</p>
+</div>
+</div>
+<button class="bg-surface-container-highest text-on-surface-variant px-5 py-2 rounded-full text-xs font-bold">Start</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Stage Gate: Locked -->
+<section class="group relative flex gap-8 opacity-60 grayscale-[0.5]">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant z-10">
+<span class="material-symbols-outlined text-xl">lock</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-lg w-full border border-transparent">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Assessment</span>
+<h3 class="text-xl font-bold text-on-surface">Stage Gate: Strategy Assignment</h3>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-black px-3 py-1 rounded-full">LOCKED</span>
+</div>
+<p class="text-sm text-on-surface-variant">Submit a comprehensive product strategy brief based on a real-world case study to unlock next stages.</p>
+</div>
+</section>
+</div>
+<!-- Sidebar Content Column -->
+<div class="md:col-span-4 space-y-8">
+<!-- Progress Card -->
+<div class="bg-indigo-900 text-white p-8 rounded-xl shadow-xl relative overflow-hidden group">
+<div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500"></div>
+<h4 class="text-xs font-black uppercase tracking-[0.2em] mb-6 opacity-70">Weekly Goal</h4>
+<div class="flex items-center justify-between mb-4">
+<span class="text-3xl font-black">12/20</span>
+<span class="text-xs font-medium opacity-80">Units this week</span>
+</div>
+<div class="w-full h-1.5 bg-white/10 rounded-full mb-6">
+<div class="h-full bg-secondary-container w-[60%] rounded-full shadow-[0_0_10px_rgba(254,166,25,0.5)]"></div>
+</div>
+<p class="text-sm opacity-80 leading-relaxed">You're on track to complete Stage 3 by Friday. Stick to the plan!</p>
+</div>
+<!-- Recommended Resource Card (Editorial style) -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<h4 class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-4">Recommended for Stage 3</h4>
+<div class="rounded-lg overflow-hidden mb-4 aspect-video relative group">
+<img alt="Recommended Video" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="close-up of a high-resolution dashboard showing clean data visualizations with minimalist aesthetic in indigo and amber tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB2jlcbdbsd99g0C2YQrFLKfj80n_a49uxt9Z4HyR8lKu5XClERiCYcDAKLkUMrVTyxmHH_2f6SoDhP5BWOGle4Zx9-werNhDKbvBuRLy20q9xebRH1lim7a56sKYc252K1NUYo_LoKRPrKSgCDXY2eTJLIHWsL3G9SLzZs6eJcYYF_j-_GLTloJwzoKgvP9L3UK-_ptPRgdbq0RWKaULUny4O1L6eFaj9eiG67x0XP5SCermx91g4ftbUJzRG_zO6JI_oEAIepA1o"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<div class="w-12 h-12 rounded-full bg-white/90 glass-effect flex items-center justify-center text-primary shadow-lg">
+<span class="material-symbols-outlined fill-1" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+</div>
+<h5 class="font-bold text-on-surface leading-tight mb-2">Mastering Segment Funnels: A Practical Guide</h5>
+<p class="text-xs text-on-surface-variant leading-relaxed">Expert PM insights on tracking drop-offs in complex user journeys.</p>
+</div>
+<!-- Mentorship Quick Access -->
+<div class="p-6 rounded-xl border-2 border-dashed border-outline-variant/30 text-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant mb-3">contact_support</span>
+<h5 class="text-sm font-bold text-on-surface mb-2">Stuck on Success Metrics?</h5>
+<p class="text-xs text-on-surface-variant mb-4">Book a 15-min strategy session with a Loomis Coach.</p>
+<button class="text-primary text-xs font-black uppercase tracking-widest hover:underline">Connect with Coach</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Success Milestone Toast (Mock) -->
+<div class="fixed bottom-8 right-8 bg-surface-container-lowest border border-outline-variant/20 p-4 rounded-xl shadow-2xl flex items-center gap-4 max-w-xs transition-all hover:translate-y-[-4px]">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Next Milestone Reaching</p>
+<p class="text-[10px] text-on-surface-variant">2 sessions left to "Analyst" rank</p>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant/40 hover:text-on-surface">close</button>
+</div>
+</body></html>

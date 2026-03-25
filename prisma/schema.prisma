@@ -1,0 +1,560 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── NextAuth Tables ────────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  accounts            Account[]
+  sessions            Session[]
+  profile             Profile?
+  pmTarget            UserPmTarget?
+  workExperiences     WorkExperience[]
+  psiEntries          PsiEntry[]
+  userSkillScores     UserSkillScore[]
+  readinessSnapshots  ReadinessScoreSnapshot[]
+  learningProgress    UserLearningProgress[]
+  assignmentSubmissions AssignmentSubmission[]
+  questionAttempts    QuestionAttempt[]
+  resumeVersions      ResumeVersion[]
+  jobDescriptions     JobDescription[]
+  profileSettings     PublicProfileSettings?
+  activityLogs        ActivityLog[]
+  streak              UserStreak?
+  conversationSessions ConversationSession[]
+  applicationTracker  ApplicationTracker[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── User Profile ─────────────────────────────────────────────────────────
+
+model Profile {
+  id                  String   @id @default(cuid())
+  userId              String   @unique @map("user_id")
+  fullName            String?  @map("full_name")
+  currentJobRole      String?  @map("current_job_role")
+  currentIndustry     String?  @map("current_industry")
+  yearsExperience     Int?     @map("years_experience")
+  educationLevel      String?  @map("education_level")
+  linkedinUrl         String?  @map("linkedin_url")
+  location            String?
+  bio                 String?  @db.Text
+  onboardingCompleted Boolean  @default(false) @map("onboarding_completed")
+  onboardingStep      Int      @default(0) @map("onboarding_step")
+  profileSlug         String?  @unique @map("profile_slug")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model UserPmTarget {
+  id             String   @id @default(cuid())
+  userId         String   @unique @map("user_id")
+  targetRoleType String   @map("target_role_type") // consumer | growth | technical | platform | ai | b2b
+  targetCompany  String?  @map("target_company")
+  targetTimeline String?  @map("target_timeline") // 3months | 6months | 12months
+  preparationStage String? @map("preparation_stage") // exploring | committed | applying
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_pm_targets")
+}
+
+// ─── Work Experience + PSI ─────────────────────────────────────────────────
+
+model WorkExperience {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  company     String
+  title       String
+  startDate   DateTime? @map("start_date")
+  endDate     DateTime? @map("end_date")
+  isCurrent   Boolean  @default(false) @map("is_current")
+  description String?  @db.Text
+  rawBullets  String[] @map("raw_bullets")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  psiEntries PsiEntry[]
+
+  @@map("work_experiences")
+}
+
+model PsiEntry {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  workExperienceId String?  @map("work_experience_id")
+  problem          String   @db.Text
+  solution         String   @db.Text
+  impact           String   @db.Text
+  rawContext       String?  @db.Text @map("raw_context")
+  isVisible        Boolean  @default(true) @map("is_visible")
+  isPinned         Boolean  @default(false) @map("is_pinned")
+  confidenceScore  Float?   @map("confidence_score")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workExperience WorkExperience?   @relation(fields: [workExperienceId], references: [id])
+  skillMappings  PsiSkillMapping[]
+
+  @@map("psi_entries")
+}
+
+model PsiSkillMapping {
+  id           String  @id @default(cuid())
+  psiEntryId   String  @map("psi_entry_id")
+  skillId      String  @map("skill_id")
+  evidenceScore Float  @map("evidence_score") // 0-100
+  notes        String? @db.Text
+
+  psiEntry PsiEntry @relation(fields: [psiEntryId], references: [id], onDelete: Cascade)
+  skill    Skill    @relation(fields: [skillId], references: [id])
+
+  @@unique([psiEntryId, skillId])
+  @@map("psi_skill_mappings")
+}
+
+// ─── Skills Taxonomy ────────────────────────────────────────────────────────
+
+model SkillCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?  @db.Text
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  skills      Skill[]
+  roleWeights RoleWeight[]
+
+  @@map("skill_categories")
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  categoryId  String   @map("category_id")
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  category        SkillCategory     @relation(fields: [categoryId], references: [id])
+  skillMappings   PsiSkillMapping[]
+  userSkillScores UserSkillScore[]
+
+  @@map("skills")
+}
+
+model RoleWeight {
+  id          String  @id @default(cuid())
+  roleType    String  @map("role_type") // consumer | growth | technical | platform | ai | b2b
+  categoryId  String  @map("category_id")
+  weight      Float   // 0.0 - 1.0, must sum to 1.0 per role type
+
+  category SkillCategory @relation(fields: [categoryId], references: [id])
+
+  @@unique([roleType, categoryId])
+  @@map("role_weights")
+}
+
+// ─── Readiness Score ────────────────────────────────────────────────────────
+
+model UserSkillScore {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  skillId         String   @map("skill_id")
+  evidenceScore   Float    @default(0) @map("evidence_score")   // 0-100
+  assignmentScore Float    @default(0) @map("assignment_score") // 0-100
+  learningScore   Float    @default(0) @map("learning_score")   // 0-100
+  totalScore      Float    @default(0) @map("total_score")      // weighted composite
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id])
+
+  @@unique([userId, skillId])
+  @@map("user_skill_scores")
+}
+
+model ReadinessScoreSnapshot {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  overallScore   Float    @map("overall_score")
+  roleType       String   @map("role_type")
+  categoryScores Json     @map("category_scores") // {categorySlug: score}
+  takenAt        DateTime @default(now()) @map("taken_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("readiness_score_snapshots")
+}
+
+// ─── Learning Path ───────────────────────────────────────────────────────────
+
+model LearningStage {
+  id              String   @id @default(cuid())
+  stageNumber     Int      @unique @map("stage_number")
+  title           String
+  slug            String   @unique
+  description     String?  @db.Text
+  estimatedHours  String?  @map("estimated_hours") // e.g. "8-12"
+  skillCategories String[] @map("skill_categories") // slugs
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  subtopics        StageSubtopic[]
+  gateAssignments  LearningGateAssignment[]
+  learningProgress UserLearningProgress[]
+
+  @@map("learning_stages")
+}
+
+model StageSubtopic {
+  id          String   @id @default(cuid())
+  stageId     String   @map("stage_id")
+  title       String
+  slug        String
+  description String?  @db.Text
+  sortOrder   Int      @default(0) @map("sort_order")
+  quickCheck  String?  @db.Text @map("quick_check") // prompt text
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  stage     LearningStage @relation(fields: [stageId], references: [id])
+  resources Resource[]
+  completions StageResourceCompletion[]
+  quickCheckSubmissions QuickCheckSubmission[]
+
+  @@unique([stageId, slug])
+  @@map("stage_subtopics")
+}
+
+model Resource {
+  id           String   @id @default(cuid())
+  subtopicId   String   @map("subtopic_id")
+  title        String
+  url          String
+  type         String   // article | video | tool | course | podcast
+  estimatedMins Int?    @map("estimated_mins")
+  difficulty   String?  // beginner | intermediate | advanced
+  qualityRating Int?    @map("quality_rating") // 1-5
+  isActive     Boolean  @default(true) @map("is_active")
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  subtopic    StageSubtopic           @relation(fields: [subtopicId], references: [id])
+  completions StageResourceCompletion[]
+
+  @@map("resources")
+}
+
+model UserLearningProgress {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  stageId      String   @map("stage_id")
+  status       String   @default("not_started") // not_started | in_progress | completed | skipped
+  startedAt    DateTime? @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+  skipTestScore Float?  @map("skip_test_score")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stage LearningStage @relation(fields: [stageId], references: [id])
+
+  @@unique([userId, stageId])
+  @@map("user_learning_progress")
+}
+
+model StageResourceCompletion {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  subtopicId String   @map("subtopic_id")
+  resourceId String   @map("resource_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  subtopic StageSubtopic @relation(fields: [subtopicId], references: [id])
+  resource Resource      @relation(fields: [resourceId], references: [id])
+
+  @@unique([userId, resourceId])
+  @@map("stage_resource_completions")
+}
+
+model QuickCheckSubmission {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  subtopicId  String   @map("subtopic_id")
+  response    String   @db.Text
+  aiFeedback  String?  @db.Text @map("ai_feedback")
+  passed      Boolean  @default(false)
+  submittedAt DateTime @default(now()) @map("submitted_at")
+
+  subtopic StageSubtopic @relation(fields: [subtopicId], references: [id])
+
+  @@map("quick_check_submissions")
+}
+
+model LearningGateAssignment {
+  id              String   @id @default(cuid())
+  stageId         String   @map("stage_id")
+  title           String
+  prompt          String   @db.Text
+  rubric          Json     // {criterion: string, points: number, description: string}[]
+  passingScore    Int      @default(60) @map("passing_score")
+  maxScore        Int      @default(100) @map("max_score")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  stage       LearningStage          @relation(fields: [stageId], references: [id])
+  submissions AssignmentSubmission[]
+
+  @@map("learning_gate_assignments")
+}
+
+model AssignmentSubmission {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  assignmentId String   @map("assignment_id")
+  content      String   @db.Text
+  aiScore      Int?     @map("ai_score")
+  aiFeedback   Json?    @map("ai_feedback") // {criterion: string, score: number, comment: string}[]
+  passed       Boolean  @default(false)
+  attempt      Int      @default(1)
+  submittedAt  DateTime @default(now()) @map("submitted_at")
+
+  user       User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignment LearningGateAssignment @relation(fields: [assignmentId], references: [id])
+
+  @@map("assignment_submissions")
+}
+
+// ─── Question Bank ────────────────────────────────────────────────────────────
+
+model QuestionBank {
+  id               String   @id @default(cuid())
+  question         String   @db.Text
+  category         String   // product_sense | analytical | strategy | behavioral | technical | estimation | execution
+  difficulty       String   // easy | medium | hard
+  roleTypes        String[] @map("role_types") // which PM types this targets
+  evaluationCriteria Json   @map("evaluation_criteria") // {criterion: string, points: number}[]
+  sampleAnswer     String?  @db.Text @map("sample_answer")
+  keyPoints        String[] @map("key_points")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  attempts QuestionAttempt[]
+
+  @@map("question_bank")
+}
+
+model QuestionAttempt {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  questionId   String   @map("question_id")
+  response     String   @db.Text
+  aiScore      Int?     @map("ai_score")
+  aiFeedback   String?  @db.Text @map("ai_feedback")
+  aiScoreBreakdown Json? @map("ai_score_breakdown")
+  attemptedAt  DateTime @default(now()) @map("attempted_at")
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question QuestionBank @relation(fields: [questionId], references: [id])
+
+  @@map("question_attempts")
+}
+
+// ─── Resume Builder ────────────────────────────────────────────────────────────
+
+model JobDescription {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  title       String
+  company     String?
+  content     String   @db.Text
+  keywords    String[]
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeVersions ResumeVersion[]
+  applicationTracker ApplicationTracker[]
+
+  @@map("job_descriptions")
+}
+
+model ResumeVersion {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  jdId         String?  @map("jd_id")
+  title        String
+  content      Json     // structured resume content (TipTap JSON)
+  atsScore     Int?     @map("ats_score")
+  keywordMatch Json?    @map("keyword_match") // {matched: string[], missing: string[]}
+  isBase       Boolean  @default(false) @map("is_base")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jd   JobDescription? @relation(fields: [jdId], references: [id])
+
+  @@map("resume_versions")
+}
+
+// ─── Public Profile ────────────────────────────────────────────────────────────
+
+model PublicProfileSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique @map("user_id")
+  showReadinessScore Boolean @default(true) @map("show_readiness_score")
+  showPsiEntries    Boolean  @default(true) @map("show_psi_entries")
+  showAssignments   Boolean  @default(true) @map("show_assignments")
+  showActivityGraph Boolean  @default(true) @map("show_activity_graph")
+  showStreak        Boolean  @default(true) @map("show_streak")
+  verificationBadge Boolean  @default(false) @map("verification_badge")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("public_profile_settings")
+}
+
+// ─── Activity & Streak ──────────────────────────────────────────────────────────
+
+model ActivityLog {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  activityType String   @map("activity_type") // resource_completed | quick_check | assignment | question_attempt | application_logged
+  entityId     String?  @map("entity_id")
+  entityType   String?  @map("entity_type")
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("activity_logs")
+}
+
+model UserStreak {
+  id            String   @id @default(cuid())
+  userId        String   @unique @map("user_id")
+  currentStreak Int      @default(0) @map("current_streak")
+  longestStreak Int      @default(0) @map("longest_streak")
+  lastActiveDate DateTime? @map("last_active_date")
+  totalDaysActive Int    @default(0) @map("total_days_active")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_streaks")
+}
+
+// ─── Conversation ──────────────────────────────────────────────────────────────
+
+model ConversationSession {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  sessionType String   @map("session_type") // onboarding | gap_filling | assessment
+  status      String   @default("active") // active | completed
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  turns ConversationTurn[]
+
+  @@map("conversation_sessions")
+}
+
+model ConversationTurn {
+  id         String   @id @default(cuid())
+  sessionId  String   @map("session_id")
+  role       String   // user | assistant
+  content    String   @db.Text
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  session ConversationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("conversation_turns")
+}
+
+// ─── Application Tracker ───────────────────────────────────────────────────────
+
+model ApplicationTracker {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  companyName     String   @map("company_name")
+  roleTitle       String?  @map("role_title")
+  jdId            String?  @map("jd_id")
+  appliedDate     DateTime @default(now()) @map("applied_date")
+  status          String   @default("applied") // applied | phone_screen | interview | rejected | offer
+  notes           String?  @db.Text
+  statusUpdatedAt DateTime @default(now()) @map("status_updated_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jd   JobDescription? @relation(fields: [jdId], references: [id])
+
+  @@map("application_tracker")
+}

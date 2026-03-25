@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Loomis | The Honest Path to PM</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#ffdbcc",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#a44100",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "on-tertiary-fixed": "#351000",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-container-high": "#e7e8e9",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "primary-fixed": "#e2dfff",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "primary": "#3525cd",
+                        "secondary-fixed": "#ffddb8",
+                        "on-surface-variant": "#464555",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "secondary": "#855300",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-container": "#fea619",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "surface-tint": "#4d44e3",
+                        "outline-variant": "#c7c4d8",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-background": "#191c1d",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8f9fa",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "primary-container": "#4f46e5",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "outline": "#777587",
+                        "inverse-surface": "#2e3132",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-primary-container": "#dad7ff",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "on-secondary-container": "#684000",
+                        "tertiary": "#7e3000",
+                        "surface-container": "#edeeef",
+                        "inverse-primary": "#c3c0ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm dark:shadow-none font-['Inter'] antialiased">
+<div class="flex items-center justify-between px-6 h-16 max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Loomis</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-indigo-600 dark:text-indigo-400 font-semibold transition-colors duration-200 ease-out" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 ease-out" href="#">Learning Path</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 ease-out" href="#">Resume Builder</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 ease-out" href="#">Question Bank</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-surface-container-low px-3 py-1.5 rounded-full border border-outline-variant/15">
+<span class="material-symbols-outlined text-outline mr-2 text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-on-surface" placeholder="Search strategy..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant/30" data-alt="Close up portrait of a professional mentor with a friendly expression in a brightly lit modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALYwecSNlmi8whBSMaf0auob82NcbHYyv0kTH8-zt251wJcQZLpx-5lTTzDX7Ug498f2lv8puzYIGMtO7sLV44vtWKDX0QIvxTg6QjV0_V4r7RFnLr849UZyq_NqXIZModZXPIaLPXWHr7EmORBTodYK2Zpa8gzqvRwugOrkbineBon6LnNFuxVuyRC2bLQtkfajjPwTptewcy0UP_36f-rBZ3uDbRoLTK3EMSGhtYOwpDIasnm6AJgUcBkq4yqGvlgsz8p8DtK7Xe"/>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-24">
+<!-- Hero Section: The Honest Friend -->
+<section class="max-w-4xl mx-auto px-6 text-center mb-32">
+<div class="inline-flex items-center bg-secondary-fixed text-on-secondary-fixed px-4 py-1.5 rounded-full mb-8">
+<span class="text-xs font-bold tracking-widest uppercase mr-2">The Honest Path</span>
+<span class="material-symbols-outlined text-sm">verified</span>
+</div>
+<h1 class="text-5xl md:text-7xl font-bold tracking-tight text-on-surface mb-8 leading-[1.1]">
+                Your first PM role shouldn't be a <span class="text-primary">guessing game.</span>
+</h1>
+<p class="text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed mb-12">
+                We don’t sell you "guaranteed six-figure offers" or secret hacks. We provide the methodical, architectural strategy required to break into Product Management through genuine skill and clinical preparation.
+            </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all active:scale-95">
+                    Start Your Strategy
+                </button>
+<button class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/20 px-8 py-4 rounded-full font-semibold text-lg hover:bg-surface-container-low transition-all">
+                    How it works
+                </button>
+</div>
+</section>
+<!-- The "What makes us different" Bento Grid -->
+<section class="max-w-6xl mx-auto px-6 mb-40">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Large Narrative Card -->
+<div class="md:col-span-7 bg-surface-container-lowest p-10 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+<div>
+<h3 class="text-2xl font-bold mb-6">We don't just sell you a course.</h3>
+<p class="text-on-surface-variant leading-relaxed text-lg mb-8">
+                            Most bootcamps treat career changes like a factory line. They give you a template, a badge, and send you on your way. 
+                            <br/><br/>
+                            Loomis is a career architecture firm. We help you deconstruct your current experience and rebuild it into a high-performance PM narrative that resonates with hiring managers at companies like Stripe, Linear, and Notion.
+                        </p>
+</div>
+<div class="flex items-center gap-4 pt-8 border-t border-outline-variant/10">
+<div class="w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">architecture</span>
+</div>
+<div>
+<p class="font-bold text-sm">Methodical Accuracy</p>
+<p class="text-xs text-on-surface-variant">Built by Senior PMs for future PMs.</p>
+</div>
+</div>
+</div>
+<!-- Secondary Accents -->
+<div class="md:col-span-5 grid grid-rows-2 gap-6">
+<div class="bg-primary text-on-primary p-8 rounded-xl flex flex-col justify-center">
+<span class="material-symbols-outlined text-4xl mb-4">clinical_notes</span>
+<h4 class="text-xl font-bold mb-2">Clinical Preparation</h4>
+<p class="text-primary-fixed/80 text-sm">No fluff. No filler. Just the technical and behavioral frameworks that actually work in modern interviews.</p>
+</div>
+<div class="bg-secondary-fixed text-on-secondary-fixed p-8 rounded-xl flex flex-col justify-center">
+<span class="material-symbols-outlined text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">psychology_alt</span>
+<h4 class="text-xl font-bold mb-2">The Honest Truth</h4>
+<p class="text-on-secondary-fixed-variant text-sm">We tell you what you're missing, not what you want to hear. Real growth starts with real feedback.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Transparency Section: The Roadmap -->
+<section class="bg-surface-container-low py-24 overflow-hidden">
+<div class="max-w-6xl mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-bold mb-4">The Strategic Architecture</h2>
+<p class="text-on-surface-variant">Four phases of career transformation, zero shortcuts.</p>
+</div>
+<div class="relative">
+<!-- Custom Roadmap Timeline -->
+<div class="hidden md:block absolute top-1/2 left-0 w-full h-px border-t border-dashed border-outline-variant/30 -translate-y-1/2 z-0"></div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 bg-surface text-primary rounded-full flex items-center justify-center font-black mb-6 ring-4 ring-primary/5">01</div>
+<h5 class="font-bold mb-2">Audit</h5>
+<p class="text-sm text-on-surface-variant">A deep dive into your existing skills and identifying the exact PM archetype you fit into.</p>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 bg-surface text-primary rounded-full flex items-center justify-center font-black mb-6 ring-4 ring-primary/5">02</div>
+<h5 class="font-bold mb-2">Rebuild</h5>
+<p class="text-sm text-on-surface-variant">Crafting your resume and LinkedIn not just to 'look good', but to pass the PM smell test.</p>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 bg-surface text-primary rounded-full flex items-center justify-center font-black mb-6 ring-4 ring-primary/5">03</div>
+<h5 class="font-bold mb-2">Execute</h5>
+<p class="text-sm text-on-surface-variant">Rigorous mock interviews and case study preparation using real-world product briefs.</p>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+<div class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center font-black mb-6 shadow-lg shadow-primary/20">04</div>
+<h5 class="font-bold mb-2">Secure</h5>
+<p class="text-sm text-on-surface-variant">Negotiation strategy and onboarding support for your first 90 days in the new role.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA: Simple & Bold -->
+<section class="max-w-4xl mx-auto px-6 py-40 text-center">
+<h2 class="text-4xl font-bold mb-8">Ready for an honest conversation?</h2>
+<p class="text-on-surface-variant text-lg mb-12 max-w-xl mx-auto">
+                Join a community of focused professionals who value precision over hype. No spam, no false promises. Just a clear path to your next career milestone.
+            </p>
+<div class="bg-surface-container px-12 py-16 rounded-xl">
+<form class="flex flex-col md:flex-row gap-4 max-w-lg mx-auto">
+<input class="flex-grow px-6 py-4 rounded-full border border-outline-variant/20 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Enter your work email" type="email"/>
+<button class="bg-primary text-on-primary px-10 py-4 rounded-full font-bold whitespace-nowrap hover:bg-primary-container transition-colors">
+                        Get Started
+                    </button>
+</form>
+<p class="mt-6 text-xs text-on-surface-variant uppercase tracking-widest font-medium">Join 2,400+ aspiring product managers</p>
+</div>
+</section>
+</main>
+<!-- Simple Editorial Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant/10 py-12">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start">
+<span class="text-xl font-black tracking-tighter text-primary mb-2">Loomis</span>
+<p class="text-xs text-on-surface-variant">The Methodical Architect of PM Careers.</p>
+</div>
+<div class="flex gap-8 text-sm font-medium text-on-surface-variant">
+<a class="hover:text-primary" href="#">Learning Path</a>
+<a class="hover:text-primary" href="#">Resume Builder</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Support</a>
+</div>
+<div class="flex gap-4">
+<a class="w-8 h-8 rounded-full border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-lg">share</span>
+</a>
+<a class="w-8 h-8 rounded-full border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-lg">chat</span>
+</a>
+</div>
+</div>
+<div class="text-center mt-12">
+<p class="text-[10px] text-outline uppercase tracking-[0.2em]">© 2024 Loomis Strategy Group. All Rights Reserved.</p>
+</div>
+</footer>
+<!-- SideNavBar (Suppressed as per rules for landing page focus, but kept for logic check - not rendered on this transaction/landing flow) -->
+</body></html>

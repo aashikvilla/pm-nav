@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Loomis | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3525cd",
+            "secondary": "#855300",
+            "surface": "#f8f9fa",
+            "on-surface": "#191c1d",
+            "on-surface-variant": "#464555",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f3f4f5",
+            "surface-container": "#edeeef",
+            "outline-variant": "#c7c4d8",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+          },
+          borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .gauge-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+    }
+    .gauge-svg {
+      transform: rotate(-90deg);
+    }
+    .gauge-bg {
+      fill: none;
+      stroke: #e2e8f0;
+      stroke-width: 12;
+    }
+    .gauge-progress {
+      fill: none;
+      stroke: #3525cd;
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: calc(440 - (440 * 62) / 100);
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-900 antialiased font-body selection:bg-indigo-100">
+<!-- SideNavBar -->
+<aside class="fixed left-0 h-full w-64 z-50 bg-[#F7F7F8] border-r border-slate-200 flex flex-col p-4 space-y-1">
+<div class="mb-8 px-2">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<h1 class="text-sm font-bold tracking-tight text-slate-900">Loomis</h1>
+</div>
+</div>
+<nav class="flex-1 space-y-0.5">
+<a class="flex items-center gap-2.5 px-3 py-1.5 bg-slate-200/50 text-slate-900 rounded-md transition-colors font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-slate-600 hover:bg-slate-200/50 rounded-md transition-colors font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="auto_stories">auto_stories</span>
+<span>Learning Path</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-slate-600 hover:bg-slate-200/50 rounded-md transition-colors font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="description">description</span>
+<span>Resume Builder</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-slate-600 hover:bg-slate-200/50 rounded-md transition-colors font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="quiz">quiz</span>
+<span>Question Bank</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-slate-200 space-y-0.5">
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-slate-600 hover:bg-slate-200/50 rounded-md transition-colors font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-slate-600 hover:bg-slate-200/50 rounded-md transition-colors font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</div>
+<button class="mt-4 w-full py-2 bg-slate-900 text-white rounded-md text-[13px] font-semibold hover:bg-slate-800 transition-all active:scale-[0.98]">
+    New Strategy
+  </button>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 z-40 custom-glass border-b border-slate-200 px-8 h-12 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 text-[13px] text-slate-500">
+<span>Dashboard</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-900 font-medium">Analysis</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 pr-4 border-r border-slate-200">
+<span class="text-[12px] font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded">🔥 5-day streak</span>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-slate-600 transition-colors text-[20px]" data-icon="notifications">notifications</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[13px] font-semibold text-slate-900">Alex Chen</span>
+<img alt="Alex Chen" class="w-6 h-6 rounded-full object-cover border border-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO0SJk9wajjRS7kQwzFkGN77GY-s6IVGLO8smuWRObAtUGK1lZOvQQeEC1T0GKcKa71gX5nmop0kj3n7HjVUpK79v5ITcEkf_MYEIOl-Xpc7E8Z3GZSzTS0BVph2QSPIaE-EjRGAxdfC58y9jsse36WZ90qRtHQi3INqaiX6ZtusjGczKBkxW-h26tePGvJXglK8FKenvtBJMZFclIMTsMJbHDIFKSs6yMoRff2v8L05JGNN0Xmcp4f_FnYdxx0QNQYIguxjs3nbr0"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-20 pb-12 px-10 max-w-6xl mx-auto">
+<!-- Welcome Header -->
+<section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h3 class="text-3xl font-bold text-slate-900 tracking-tight mb-2">Analysis Dashboard</h3>
+<p class="text-[15px] text-slate-500 max-w-xl leading-relaxed">Your career architecture is taking shape. Based on your technical background and target role, here is your current readiness baseline.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 border border-slate-200 text-slate-600 text-[13px] font-semibold rounded-md hover:bg-slate-50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">refresh</span> Revalidate
+        </button>
+</div>
+</section>
+<!-- Impact Section: Score & Next Step -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<!-- Readiness Score Gauge Card -->
+<div class="col-span-12 lg:col-span-5 bg-white rounded-xl border border-slate-200 p-8 flex flex-col items-center justify-center relative shadow-sm">
+<div class="absolute top-6 left-6 flex items-center gap-2">
+<span class="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Readiness Score</span>
+</div>
+<div class="gauge-container mb-6">
+<svg class="gauge-svg w-full h-full" viewbox="0 0 160 160">
+<circle class="gauge-bg" cx="80" cy="80" r="70"></circle>
+<circle class="gauge-progress" cx="80" cy="80" r="70"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-5xl font-black text-slate-900">62%</span>
+<span class="text-[11px] font-bold text-green-600 mt-1 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +4%
+            </span>
+</div>
+</div>
+<div class="text-center">
+<p class="text-[14px] font-semibold text-slate-900 mb-1">Technical Product Manager</p>
+<div class="flex items-center justify-center gap-4 mt-4">
+<div class="text-center px-4 border-r border-slate-100">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Before</p>
+<p class="text-[14px] font-bold text-slate-400 italic">58%</p>
+</div>
+<div class="text-center px-4">
+<p class="text-[10px] text-primary uppercase font-bold tracking-tighter">Current</p>
+<p class="text-[14px] font-bold text-primary">62%</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action-Oriented Next Step Card -->
+<div class="col-span-12 lg:col-span-7 bg-indigo-600 rounded-xl p-8 text-white relative overflow-hidden flex flex-col justify-between shadow-lg shadow-indigo-100">
+<div class="relative z-10">
+<div class="inline-flex px-2 py-0.5 bg-white/20 backdrop-blur-md rounded text-[10px] font-bold tracking-widest uppercase mb-6 border border-white/10">
+            Critical Milestone
+          </div>
+<h4 class="text-3xl font-bold mb-3 leading-tight tracking-tight">Stage 3: Analytical Skills</h4>
+<p class="text-indigo-100/80 text-lg mb-8 max-w-md">Our analysis shows a 40% gap in Data-Driven Decisions. Complete the <span class="text-white font-semibold">"Funnel Analysis"</span> module to boost your readiness by 12%.</p>
+</div>
+<div class="relative z-10 flex flex-wrap items-center gap-3">
+<button class="px-6 py-2.5 bg-white text-indigo-700 rounded-md font-bold text-[14px] shadow-sm hover:bg-slate-50 transition-all active:scale-95">
+            Continue Learning Path
+          </button>
+<button class="px-5 py-2.5 bg-indigo-500/50 hover:bg-indigo-500/70 border border-white/20 rounded-md font-semibold text-[14px] transition-all">
+            View Curriculum
+          </button>
+</div>
+<!-- Background Elements -->
+<div class="absolute right-[-20px] top-[-20px] opacity-10 pointer-events-none transform rotate-12">
+<span class="material-symbols-outlined text-[240px]">bar_chart_4_bars</span>
+</div>
+</div>
+</div>
+<!-- Skill Breakdown High Fidelity Section -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<!-- Detailed Skill Bars -->
+<div class="col-span-12 lg:col-span-8 bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
+<div class="flex items-center justify-between mb-10">
+<div>
+<h4 class="text-lg font-bold text-slate-900">Skill Breakdown</h4>
+<p class="text-[13px] text-slate-500">Competitive analysis vs. Technical PM standards</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[12px] font-medium text-slate-500">Alex</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-slate-200"></span>
+<span class="text-[12px] font-medium text-slate-500">Industry Avg.</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+<!-- Skill Bar Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[13px] font-bold text-slate-700">Product Strategy</span>
+<span class="text-[13px] font-black text-primary">78%</span>
+</div>
+<div class="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-slate-200/50 w-[90%]"></div> <!-- Target -->
+<div class="absolute top-0 left-0 h-full bg-primary w-[78%] rounded-full"></div> <!-- Current -->
+</div>
+</div>
+<!-- Skill Bar Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[13px] font-bold text-slate-700">Analytical Skills</span>
+<span class="text-[13px] font-black text-orange-600">45%</span>
+</div>
+<div class="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-slate-200/50 w-[80%]"></div>
+<div class="absolute top-0 left-0 h-full bg-orange-500 w-[45%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill Bar Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[13px] font-bold text-slate-700">User Understanding</span>
+<span class="text-[13px] font-black text-slate-900">62%</span>
+</div>
+<div class="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-slate-200/50 w-[85%]"></div>
+<div class="absolute top-0 left-0 h-full bg-indigo-500 w-[62%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill Bar Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[13px] font-bold text-slate-700">Technical Acumen</span>
+<span class="text-[13px] font-black text-primary">95%</span>
+</div>
+<div class="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-slate-200/50 w-[75%]"></div>
+<div class="absolute top-0 left-0 h-full bg-primary w-[95%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill Bar Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[13px] font-bold text-slate-700">Communication</span>
+<span class="text-[13px] font-black text-slate-900">72%</span>
+</div>
+<div class="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-slate-200/50 w-[80%]"></div>
+<div class="absolute top-0 left-0 h-full bg-indigo-500 w-[72%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill Bar Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-[13px] font-bold text-slate-700">Business Acumen</span>
+<span class="text-[13px] font-black text-orange-600">35%</span>
+</div>
+<div class="relative h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-slate-200/50 w-[70%]"></div>
+<div class="absolute top-0 left-0 h-full bg-orange-500 w-[35%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity/Milestones List -->
+<div class="col-span-12 lg:col-span-4 bg-[#F7F7F8] border border-slate-200 rounded-xl p-8 shadow-sm flex flex-col">
+<h4 class="text-[14px] font-bold text-slate-900 mb-6 uppercase tracking-wider">Recent Activity</h4>
+<div class="flex-1 space-y-5 overflow-y-auto no-scrollbar">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-white border border-slate-200 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px] text-slate-600">check_circle</span>
+</div>
+<div>
+<p class="text-[13px] font-semibold text-slate-900 leading-tight">Assessment Completed</p>
+<p class="text-[11px] text-slate-500">Technical PM Core Competencies</p>
+<span class="text-[10px] text-slate-400 mt-1 block uppercase">2 hours ago</span>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px] text-indigo-600">lightbulb</span>
+</div>
+<div>
+<p class="text-[13px] font-semibold text-slate-900 leading-tight">Learning Milestone</p>
+<p class="text-[11px] text-slate-500">SQL for Product Managers</p>
+<span class="text-[10px] text-slate-400 mt-1 block uppercase">Yesterday</span>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-white border border-slate-200 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px] text-slate-600">description</span>
+</div>
+<div>
+<p class="text-[13px] font-semibold text-slate-900 leading-tight">Resume Uploaded</p>
+<p class="text-[11px] text-slate-500">Alex_Chen_Resume_V2.pdf</p>
+<span class="text-[10px] text-slate-400 mt-1 block uppercase">2 days ago</span>
+</div>
+</div>
+</div>
+<button class="mt-8 py-2 px-4 w-full border border-slate-200 text-slate-600 text-[12px] font-bold rounded-md hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+          View All History <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Career Roadmap Phase 1 -->
+<section class="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<h4 class="text-lg font-bold text-slate-900">Roadmap Milestone</h4>
+<span class="text-[12px] font-medium text-slate-500">Phase 1: Foundation</span>
+</div>
+<div class="flex items-center justify-between relative px-4">
+<!-- Timeline line -->
+<div class="absolute top-[22px] left-0 w-full h-[1px] bg-slate-200 -z-0"></div>
+<!-- Roadmap Step 1 -->
+<div class="relative z-10 flex flex-col items-center gap-3 text-center w-1/4">
+<div class="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-white ring-4 ring-white shadow-sm border border-primary/20">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<p class="text-[11px] font-bold text-primary uppercase tracking-tighter">Completed</p>
+<p class="text-[13px] font-semibold text-slate-900">Baseline Analysis</p>
+</div>
+</div>
+<!-- Roadmap Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-3 text-center w-1/4">
+<div class="w-11 h-11 rounded-full bg-white border-2 border-primary flex items-center justify-center text-primary ring-4 ring-white shadow-sm">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</div>
+<div>
+<p class="text-[11px] font-bold text-slate-900 uppercase tracking-tighter">Current</p>
+<p class="text-[13px] font-semibold text-slate-900">Skill Gap Closing</p>
+</div>
+</div>
+<!-- Roadmap Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-3 text-center w-1/4">
+<div class="w-11 h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-300 ring-4 ring-white">
+<div class="w-2 h-2 rounded-full bg-slate-200"></div>
+</div>
+<div>
+<p class="text-[11px] font-bold text-slate-300 uppercase tracking-tighter">Step 3</p>
+<p class="text-[13px] font-semibold text-slate-400">Resume Architecting</p>
+</div>
+</div>
+<!-- Roadmap Step 4 -->
+<div class="relative z-10 flex flex-col items-center gap-3 text-center w-1/4">
+<div class="w-11 h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-300 ring-4 ring-white">
+<div class="w-2 h-2 rounded-full bg-slate-200"></div>
+</div>
+<div>
+<p class="text-[11px] font-bold text-slate-300 uppercase tracking-tighter">Step 4</p>
+<p class="text-[13px] font-semibold text-slate-400">Interview Drill</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Mobile Navigation Bar -->
+<nav class="md:hidden fixed bottom-0 w-full h-14 bg-white border-t border-slate-200 flex items-center justify-around z-50">
+<a class="flex flex-col items-center text-primary font-bold" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="text-[9px]">Dashboard</span>
+</a>
+<a class="flex flex-col items-center text-slate-400" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="auto_stories">auto_stories</span>
+<span class="text-[9px]">Learning</span>
+</a>
+<a class="flex flex-col items-center text-slate-400" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="description">description</span>
+<span class="text-[9px]">Resume</span>
+</a>
+<a class="flex flex-col items-center text-slate-400" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="text-[9px]">Settings</span>
+</a>
+</nav>
+</body></html>

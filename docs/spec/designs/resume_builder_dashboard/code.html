@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Resume Builder Dashboard | Methodical Architect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "secondary-container": "#fea619",
+              "surface-container": "#edeeef",
+              "primary-container": "#4f46e5",
+              "on-primary-container": "#dad7ff",
+              "tertiary-container": "#a44100",
+              "inverse-surface": "#2e3132",
+              "surface": "#f8f9fa",
+              "secondary": "#855300",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary": "#ffffff",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#351000",
+              "surface-bright": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "inverse-on-surface": "#f0f1f2",
+              "on-tertiary-container": "#ffd2be",
+              "on-tertiary": "#ffffff",
+              "outline-variant": "#c7c4d8",
+              "surface-tint": "#4d44e3",
+              "surface-dim": "#d9dadb",
+              "on-secondary-container": "#684000",
+              "on-surface": "#191c1d",
+              "on-background": "#191c1d",
+              "secondary-fixed": "#ffddb8",
+              "on-surface-variant": "#464555",
+              "tertiary-fixed-dim": "#ffb695",
+              "outline": "#777587",
+              "on-primary-fixed-variant": "#3323cc",
+              "tertiary-fixed": "#ffdbcc",
+              "on-secondary-fixed-variant": "#653e00",
+              "surface-variant": "#e1e3e4",
+              "secondary-fixed-dim": "#ffb95f",
+              "primary-fixed-dim": "#c3c0ff",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#f3f4f5",
+              "on-primary-fixed": "#0f0069",
+              "on-secondary-fixed": "#2a1700",
+              "inverse-primary": "#c3c0ff",
+              "tertiary": "#7e3000",
+              "surface-container-high": "#e7e8e9",
+              "primary-fixed": "#e2dfff",
+              "on-tertiary-fixed-variant": "#7b2f00",
+              "error-container": "#ffdad6",
+              "primary": "#3525cd",
+              "on-error": "#ffffff",
+              "background": "#f8f9fa"
+            },
+            fontFamily: {
+              "headline": ["Inter", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f9fa;
+        color: #191c1d;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface">
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-slate-50 dark:bg-slate-950 flex flex-col p-4 gap-2 z-50">
+<div class="px-2 py-4 mb-4">
+<h1 class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">Career Roadmap</h1>
+<p class="text-xs font-medium text-slate-500 uppercase tracking-widest mt-1">Senior Product Manager</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900/50 text-sm font-medium transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900/50 text-sm font-medium transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span>Learning Path</span>
+</a>
+<!-- Active State: Resume Builder -->
+<a class="flex items-center gap-3 px-3 py-2 bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm rounded-lg text-sm font-semibold transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<span>Resume Builder</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900/50 text-sm font-medium transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span>Question Bank</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900/50 text-sm font-medium transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">person</span>
+<span>Profile</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1 pt-4 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full bg-secondary-fixed text-on-secondary-fixed py-2.5 rounded-full text-sm font-semibold mb-4 active:scale-[0.98] transition-transform duration-200">
+                Upgrade to Pro
+            </button>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900/50 text-sm font-medium transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900/50 text-sm font-medium transition-all rounded-lg text-error" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen bg-surface p-8 md:p-12">
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-12">
+<div>
+<h2 class="text-[2.75rem] font-bold tracking-tight text-on-surface leading-tight mb-2">Resume Intelligence</h2>
+<p class="text-on-surface-variant max-w-lg leading-relaxed">
+                    Architect your professional narrative with surgical precision. Our JD analysis tool ensures your resume meets the exacting standards of top-tier tech firms.
+                </p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-bold flex items-center gap-2 shadow-lg shadow-indigo-500/10 active:scale-[0.98] transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                    New JD Analysis
+                </button>
+</div>
+</header>
+<!-- Stats Grid (Subtle Asymmetry) -->
+<div class="grid grid-cols-12 gap-6 mb-12">
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest p-6 rounded-2xl">
+<p class="text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant mb-4">Mastery Score</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-semibold text-primary">84</span>
+<span class="text-on-surface-variant font-medium">/ 100</span>
+</div>
+<div class="mt-4 flex gap-1">
+<div class="h-1 w-full bg-primary rounded-full"></div>
+<div class="h-1 w-full bg-primary rounded-full"></div>
+<div class="h-1 w-full bg-primary rounded-full"></div>
+<div class="h-1 w-1/2 bg-outline-variant/30 rounded-full"></div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-8 bg-surface-container-low p-6 rounded-2xl flex items-center gap-8">
+<div class="flex-1">
+<p class="text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant mb-2">Quick Strategy</p>
+<p class="text-sm text-on-surface italic">"Focus on quantifying your impact in the Stripe application. Use the metric-first template for better ATS parsing."</p>
+</div>
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full bg-indigo-100 border-2 border-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-indigo-600">auto_awesome</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-amber-100 border-2 border-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-amber-600">trending_up</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Saved Resumes Section -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-xl font-semibold text-on-surface">Architected Resumes</h3>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">sort</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid List -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Resume Card 1 -->
+<div class="group bg-surface-container-lowest p-6 rounded-2xl hover:bg-surface-container-low transition-all duration-300 relative overflow-hidden">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
+<img alt="Stripe Logo" class="w-8 h-8 object-contain" data-alt="Stripe company logo with minimalist purple branding on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzlnvwu3Qxjstw2bsno-cSBVPLvAv2MjdyqJTzRhqmh2IQRUyjKiXXnjiWnspbIPN-b1cMfO32QPK2rDilJAQ2Ng99hN_z8DWTz52AtdGOb1XcFiksqygC-0IMEUzlxD1CxwtrM6qsENkS1Z0pOhHn9zHLOWCjfijISPWtKNHVM4a53OMCbuFJuB-FGLqop_-IzwQg48xgj0YkP2VGwzXo1-nhUlaCW3eGMzQjk3zeC5eDLagQ2HNNh19E0TZ41dYIABKp0_FVNTX0"/>
+</div>
+<div class="text-right">
+<span class="text-[0.75rem] font-bold uppercase tracking-[0.05em] text-secondary bg-secondary-fixed px-2 py-1 rounded-md">ATS: 92%</span>
+</div>
+</div>
+<h4 class="text-lg font-semibold text-on-surface mb-1">Senior PM - Stripe</h4>
+<p class="text-sm text-on-surface-variant mb-6">Last updated: Oct 24, 2023</p>
+<div class="flex items-center justify-between">
+<div class="flex gap-4">
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                View
+                            </button>
+<button class="text-on-surface-variant text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">edit</span>
+                                Edit
+                            </button>
+</div>
+<button class="p-2 rounded-full hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+<!-- Subtle Ghost Border -->
+<div class="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/5 transition-all rounded-2xl pointer-events-none"></div>
+</div>
+<!-- Resume Card 2 -->
+<div class="group bg-surface-container-lowest p-6 rounded-2xl hover:bg-surface-container-low transition-all duration-300 relative overflow-hidden">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
+<img alt="Razorpay Logo" class="w-8 h-8 object-contain" data-alt="Razorpay financial services company logo with blue minimalist branding" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd9HX8u1yU-OCJWtyBWBue4xYyC2Y4HG1Zhn_5DYbujUwsSLkthKPA9DNGNm091ISD5-47CO-bFU3vlfymy7643sMxGfqdaiHhExbfHAE7GWDtXVtyfe6ZruN1Q0wgtWXYAnG9QlRN1Hr73P4ATgycWL6zNSYDkb7enruL2w0l6ndiq3eVFvvkk7qH9msVmqTgKtd24CkKWIee_cjaXrCxy7TS5gl2cAcOuDg9cVDggQLqUsWhHTq8NfSik-uCUhgKADGNy1xFBGko"/>
+</div>
+<div class="text-right">
+<span class="text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant bg-surface-container px-2 py-1 rounded-md">ATS: 78%</span>
+</div>
+</div>
+<h4 class="text-lg font-semibold text-on-surface mb-1">Technical PM - Razorpay</h4>
+<p class="text-sm text-on-surface-variant mb-6">Last updated: Oct 12, 2023</p>
+<div class="flex items-center justify-between">
+<div class="flex gap-4">
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                View
+                            </button>
+<button class="text-on-surface-variant text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">edit</span>
+                                Edit
+                            </button>
+</div>
+<button class="p-2 rounded-full hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+<div class="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/5 transition-all rounded-2xl pointer-events-none"></div>
+</div>
+<!-- Resume Card 3 -->
+<div class="group bg-surface-container-lowest p-6 rounded-2xl hover:bg-surface-container-low transition-all duration-300 relative overflow-hidden">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl text-slate-400">domain</span>
+</div>
+<div class="text-right">
+<span class="text-[0.75rem] font-bold uppercase tracking-[0.05em] text-secondary bg-secondary-fixed px-2 py-1 rounded-md">ATS: 85%</span>
+</div>
+</div>
+<h4 class="text-lg font-semibold text-on-surface mb-1">Lead Product Manager - Meta</h4>
+<p class="text-sm text-on-surface-variant mb-6">Last updated: Sep 28, 2023</p>
+<div class="flex items-center justify-between">
+<div class="flex gap-4">
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                View
+                            </button>
+<button class="text-on-surface-variant text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">edit</span>
+                                Edit
+                            </button>
+</div>
+<button class="p-2 rounded-full hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+<div class="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/5 transition-all rounded-2xl pointer-events-none"></div>
+</div>
+<!-- Empty State/New Action Card -->
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant p-6 rounded-2xl flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary/50 transition-all">
+<div class="w-14 h-14 rounded-full bg-white mb-4 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">add</span>
+</div>
+<p class="font-semibold text-on-surface">Start New Analysis</p>
+<p class="text-xs text-on-surface-variant mt-1">Optimize for a specific JD</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Modal: New JD Analysis (Visible state simulation) -->
+<!-- In a real app, this would be hidden by default -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-on-surface/20 backdrop-blur-sm"></div>
+<!-- Modal Content -->
+<div class="relative bg-surface-container-lowest w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden">
+<div class="p-8">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-2xl font-bold tracking-tight text-on-surface">New JD Analysis</h3>
+<p class="text-sm text-on-surface-variant mt-1">Paste the job description to begin architectural mapping.</p>
+</div>
+<button class="p-2 rounded-full bg-surface-container-low hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant mb-2">Company Name</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 transition-all text-sm py-3 px-4 rounded-t-lg" placeholder="e.g. Airbnb, Uber, OpenAI" type="text"/>
+</div>
+<div>
+<label class="block text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant mb-2">Job Description</label>
+<textarea class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 transition-all text-sm py-3 px-4 rounded-t-lg resize-none no-scrollbar" placeholder="Paste the full job description text here..." rows="8"></textarea>
+</div>
+<div class="flex items-center gap-4 bg-primary-fixed/30 p-4 rounded-2xl">
+<span class="material-symbols-outlined text-primary">tips_and_updates</span>
+<p class="text-xs text-on-primary-fixed-variant leading-relaxed">
+<strong>Architect Pro-tip:</strong> Include the "Requirements" and "Preferred Qualifications" sections for the highest ATS accuracy.
+                        </p>
+</div>
+<div class="flex justify-end gap-4 pt-4">
+<button class="px-6 py-3 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                            Cancel
+                        </button>
+<button class="bg-primary text-on-primary px-10 py-3 rounded-full font-bold shadow-lg shadow-indigo-500/10 active:scale-[0.98] transition-transform">
+                            Generate Analysis
+                        </button>
+</div>
+</div>
+</div>
+<!-- Modal Bottom Accent -->
+<div class="h-1.5 w-full bg-primary"></div>
+</div>
+</div>
+</body></html>

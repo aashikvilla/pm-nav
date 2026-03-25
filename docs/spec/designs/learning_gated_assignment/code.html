@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stage Gate Assignment | Methodical Architect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "secondary-container": "#fea619",
+              "surface-container": "#edeeef",
+              "primary-container": "#4f46e5",
+              "on-primary-container": "#dad7ff",
+              "tertiary-container": "#a44100",
+              "inverse-surface": "#2e3132",
+              "surface": "#f8f9fa",
+              "secondary": "#855300",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary": "#ffffff",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#351000",
+              "surface-bright": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "inverse-on-surface": "#f0f1f2",
+              "on-tertiary-container": "#ffd2be",
+              "on-tertiary": "#ffffff",
+              "outline-variant": "#c7c4d8",
+              "surface-tint": "#4d44e3",
+              "surface-dim": "#d9dadb",
+              "on-secondary-container": "#684000",
+              "on-surface": "#191c1d",
+              "on-background": "#191c1d",
+              "secondary-fixed": "#ffddb8",
+              "on-surface-variant": "#464555",
+              "tertiary-fixed-dim": "#ffb695",
+              "outline": "#777587",
+              "on-primary-fixed-variant": "#3323cc",
+              "tertiary-fixed": "#ffdbcc",
+              "on-secondary-fixed-variant": "#653e00",
+              "surface-variant": "#e1e3e4",
+              "secondary-fixed-dim": "#ffb95f",
+              "primary-fixed-dim": "#c3c0ff",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#f3f4f5",
+              "on-primary-fixed": "#0f0069",
+              "on-secondary-fixed": "#2a1700",
+              "inverse-primary": "#c3c0ff",
+              "tertiary": "#7e3000",
+              "surface-container-high": "#e7e8e9",
+              "primary-fixed": "#e2dfff",
+              "on-tertiary-fixed-variant": "#7b2f00",
+              "error-container": "#ffdad6",
+              "primary": "#3525cd",
+              "on-error": "#ffffff",
+              "background": "#f8f9fa"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-sm flex justify-between items-center px-6 h-16">
+<div class="flex items-center gap-4">
+<span class="text-lg font-semibold text-slate-900 font-headline tracking-tight">Methodical Architect</span>
+<div class="h-4 w-[1px] bg-outline-variant/30 hidden md:block"></div>
+<span class="hidden md:block text-sm font-medium text-on-surface-variant">Growth Metrics Module</span>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 hover:text-indigo-500 transition-colors text-sm font-medium" href="#">Dashboard</a>
+<a class="text-indigo-600 font-semibold text-sm font-medium" href="#">Learning Path</a>
+<a class="text-slate-500 hover:text-indigo-500 transition-colors text-sm font-medium" href="#">Resume Builder</a>
+</nav>
+<div class="flex items-center gap-3 border-l border-outline-variant/20 pl-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User profile avatar" data-alt="Professional portrait of a male product manager in a minimal architectural office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWA4JNEVFA-EspPQHG3hFBRA2AaPaxie1WukzD1LUQhWykFn_GJyCuXyqBS3YjsFsng4UtjStOvPnh3WYkpQ2ECuyVt9Foz4gogWe_mI0od70aazR3wnfZ_cB2ofJZ1TfWl1Xejht-4k2Iq0M9YIdOXREOubrGD5D2cY90rCx6CnX58wHE4UzXxxa9IIfFspDQstpExpRk9LSJLnc54ZC4tVo9xEGufbtAHL3Acx0zKzHnmbqePVhDcb2aG15qVUPas3xbevXUNWez"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Side Navigation Sidebar (Suppressed on deep task view per rules, but showing context for the shell) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 border-r-0 pt-20 hidden md:flex flex-col p-4 gap-2">
+<div class="px-4 mb-6">
+<div class="text-xs font-bold text-outline uppercase tracking-widest mb-1">Module 04</div>
+<div class="text-sm font-bold text-on-surface">Data-Driven Strategy</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+<span>The Funnel Logic</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Conversion Triggers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white text-indigo-600 shadow-sm rounded-lg transition-all text-sm font-semibold" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="assignment">assignment</span>
+<span>Stage Gate Assignment</span>
+</a>
+<div class="px-4 py-2 mt-4">
+<div class="h-[1px] bg-outline-variant/20 w-full"></div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 cursor-not-allowed text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="lock">lock</span>
+<span>Cohort Analysis</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-surface-container-low rounded-xl">
+<p class="text-xs text-on-surface-variant leading-relaxed">Complete this assignment to unlock <span class="font-bold">Module 05: Monetization Models</span>.</p>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-24 px-6 md:px-12 pb-20">
+<div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10 items-start">
+<!-- Content Area: The Document -->
+<div class="flex-grow w-full space-y-8">
+<header class="space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold tracking-widest uppercase">
+                        Unlocking Stage 4
+                    </div>
+<h1 class="text-4xl font-headline font-bold text-on-surface tracking-tight leading-tight">Define a complete funnel metrics framework for an insurance product.</h1>
+<p class="text-on-surface-variant body-md max-w-2xl">
+                        Reference your learnings from Section 6.10 (Retention Loops) and 8.3 (Unit Economics). Your goal is to map the entire user journey from acquisition to claims management.
+                    </p>
+</header>
+<!-- Input Zone -->
+<div class="bg-surface-container-lowest rounded-lg p-1 shadow-sm ring-1 ring-outline-variant/10">
+<div class="bg-surface-container-low/50 rounded-t-lg px-6 py-3 border-b border-outline-variant/10 flex justify-between items-center">
+<div class="flex items-center gap-4 text-xs font-medium text-on-surface-variant">
+<button class="flex items-center gap-1 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="format_bold">format_bold</span> Bold</button>
+<button class="flex items-center gap-1 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="format_list_bulleted">format_list_bulleted</span> List</button>
+<button class="flex items-center gap-1 hover:text-primary"><span class="material-symbols-outlined text-sm" data-icon="table_chart">table_chart</span> Table</button>
+</div>
+<span class="text-[10px] text-outline font-label uppercase tracking-wider">Draft Saved 2m ago</span>
+</div>
+<textarea class="w-full min-h-[500px] p-8 bg-transparent border-none focus:ring-0 text-on-surface leading-relaxed font-body text-base resize-none" placeholder="Start typing your framework strategy here..."></textarea>
+</div>
+<div class="flex justify-end pt-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
+<span>Submit for AI Evaluation</span>
+<span class="material-symbols-outlined" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</button>
+</div>
+</div>
+<!-- Sidebar Area: Rubric & Context -->
+<aside class="w-full lg:w-80 space-y-6 flex-shrink-0">
+<!-- Evaluation Rubric Card -->
+<div class="bg-surface-container-low rounded-xl p-6">
+<h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-4 border-b border-outline-variant/20 pb-2">Evaluation Rubric</h3>
+<ul class="space-y-4">
+<li class="space-y-1">
+<div class="flex justify-between text-xs font-semibold">
+<span class="text-on-surface">Structural Clarity</span>
+<span class="text-primary">40%</span>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-normal">Framework identifies all 5 funnel stages clearly with actionable KPIs.</p>
+</li>
+<li class="space-y-1">
+<div class="flex justify-between text-xs font-semibold">
+<span class="text-on-surface">Contextual Relevance</span>
+<span class="text-primary">30%</span>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-normal">Metrics are specific to the insurance vertical (LTV, CAC, Claims Ratio).</p>
+</li>
+<li class="space-y-1">
+<div class="flex justify-between text-xs font-semibold">
+<span class="text-on-surface">Retention Focus</span>
+<span class="text-primary">30%</span>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-normal">Solution addresses Section 6.10 principles of looping and habitual usage.</p>
+</li>
+</ul>
+</div>
+<!-- Guidance/Reference Card -->
+<div class="bg-white border border-outline-variant/30 rounded-xl overflow-hidden">
+<div class="h-32 bg-slate-100 relative">
+<img alt="Reference materials" class="w-full h-full object-cover grayscale opacity-50" data-alt="Close up of high-end architectural plans with technical drawing tools on a clean desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSpHxonhwJS98kTO2obdyROQlbtxiZsLVIzCg9VHCD5AZxFg8KUdMHEMWG4ooAvzRPD8s23og3CPOtt3RzaR9y1bJ1NY7wexIqwFTkIxTkYalcjQB8O4ciD8OZPUo5it_0nA5SyT_tDX2AAwAtuWpl2GIhIlsXiqVMSqv7Ic_FtiNMK1eOZjFX0iKqNeGJ9qwWD9Z6NqpaAGuMLEK3N7tZt207Em-PpPuGC5JG4P5EKWn0jBPPdZZ16IIP9PhU9iKY5BKegURTbHhC"/>
+<div class="absolute inset-0 bg-gradient-to-t from-white to-transparent"></div>
+</div>
+<div class="p-5 space-y-3 -mt-6 relative">
+<h4 class="text-xs font-bold text-on-surface">Reference Materials</h4>
+<div class="space-y-2">
+<a class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="article">article</span>
+<span class="text-[11px] font-medium text-on-surface-variant">Section 6.10 Summary</span>
+</div>
+<span class="material-symbols-outlined text-xs text-outline opacity-0 group-hover:opacity-100 transition-opacity" data-icon="open_in_new">open_in_new</span>
+</a>
+<a class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="play_circle">play_circle</span>
+<span class="text-[11px] font-medium text-on-surface-variant">Unit Economics Deep-dive</span>
+</div>
+<span class="material-symbols-outlined text-xs text-outline opacity-0 group-hover:opacity-100 transition-opacity" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Mentor Tip -->
+<div class="p-6 bg-primary-fixed text-on-primary-fixed rounded-xl flex gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb">lightbulb</span>
+<div class="space-y-1">
+<p class="text-xs font-bold uppercase tracking-widest">Mentor Tip</p>
+<p class="text-xs leading-relaxed opacity-90">Don't forget to include <span class="font-bold">North Star Metrics</span> for the post-purchase experience. Insurance is won in the claims funnel.</p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Contextual FAB Suppression (Hiding FAB as per task focus rules) -->
+</body></html>
