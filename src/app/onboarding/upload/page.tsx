@@ -14,7 +14,7 @@ export default async function OnboardingUploadPage() {
     select: { onboardingStep: true },
   })
 
-  if (profile && profile.onboardingStep > 1) {
+  if (profile && profile.onboardingStep > 0) {
     redirect(await getOnboardingRedirect(userId))
   }
 

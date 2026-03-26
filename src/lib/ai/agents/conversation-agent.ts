@@ -12,6 +12,21 @@ export interface PsiSignal {
   skillsHinted: string[]
 }
 
+export interface WorkExperienceContext {
+  companyName: string
+  jobTitle: string
+  startDate: string | null
+  endDate: string | null
+  description: string | null
+}
+
+export interface PsiEntryContext {
+  problem: string
+  solution: string
+  impact: string
+  confidenceScore: number | null
+}
+
 interface ConversationInput {
   userName: string
   currentRole: string
@@ -19,6 +34,8 @@ interface ConversationInput {
   topGaps: { categoryName: string; score: number }[]
   history: { role: "user" | "assistant"; content: string }[]
   userMessage: string
+  workExperiences?: WorkExperienceContext[]
+  existingPsiEntries?: PsiEntryContext[]
 }
 
 export interface ConversationOutput {
@@ -31,15 +48,17 @@ const BASE_SYSTEM_PROMPT = `You are a PM career coach having a focused conversat
 
 Your goals:
 1. Ask ONE targeted question per turn about specific past experiences
-2. Focus on the candidate's skill gaps — ask about situations that reveal PM instincts
-3. Extract concrete PSI (Problem/Solution/Impact) signals from their answers
-4. After 6-8 turns of productive conversation, conclude the session
+2. Reference the candidate's actual resume experiences and job titles — be specific, not generic
+3. Focus on the candidate's skill gaps — ask about situations that reveal PM instincts
+4. Extract concrete PSI (Problem/Solution/Impact) signals from their answers
+5. After 8-10 turns of productive conversation, conclude the session with a warm wrap-up
 
 Rules:
-- Be warm, specific, and encouraging — reference what they just said
-- Ask about their ACTUAL past experiences, not hypotheticals
+- Be warm, specific, and encouraging — reference what they just said AND their actual work history
+- Ask about their ACTUAL past experiences by name (e.g. "At Acme Corp, you mentioned X — tell me about...")
 - Keep responses concise: 2-4 sentences acknowledging their answer + one follow-up question
-- When you've gathered enough signals (6-8 exchanges), add exactly [COMPLETE] at the end of your final message
+- Do NOT ask hypotheticals — always ground questions in their real history
+- After 8-10 exchanges, when you have enough PM signal, write a 1-sentence wrap-up and add exactly [COMPLETE] at the end
 
 PSI extraction: When the user describes a PM-relevant experience, extract it.
 After your conversational reply, on a new line output a PSI block ONLY if there's a new signal:
@@ -53,13 +72,40 @@ export async function runConversationTurn(input: ConversationInput): Promise<Con
     .map((g) => `${g.categoryName} (${g.score}/100)`)
     .join(", ")
 
+  const workHistory =
+    input.workExperiences && input.workExperiences.length > 0
+      ? input.workExperiences
+          .map((w) => {
+            const tenure = [w.startDate, w.endDate ?? "present"].filter(Boolean).join(" – ")
+            return `  • ${w.jobTitle} at ${w.companyName}${tenure ? ` (${tenure})` : ""}${w.description ? `: ${w.description.slice(0, 120)}` : ""}`
+          })
+          .join("\n")
+      : "  (no work history available)"
+
+  const psiContext =
+    input.existingPsiEntries && input.existingPsiEntries.length > 0
+      ? input.existingPsiEntries
+          .slice(0, 4)
+          .map(
+            (p) =>
+              `  • Problem: ${p.problem.slice(0, 80)} → Solution: ${p.solution.slice(0, 80)} (confidence: ${p.confidenceScore ?? "n/a"})`
+          )
+          .join("\n")
+      : "  (none yet — surface new ones)"
+
   const systemPrompt = `${BASE_SYSTEM_PROMPT}
 
 Candidate context:
 - Name: ${input.userName}
 - Current role: ${input.currentRole}
 - Target: ${input.targetRole} PM
-- Key skill gaps to explore: ${gapList || "unknown — use general PM questions"}`
+- Key skill gaps to explore: ${gapList || "unknown — use general PM questions"}
+
+Work history (reference these specifically in your questions):
+${workHistory}
+
+PSI signals already captured (avoid re-asking about these):
+${psiContext}`
 
   const messages: { role: "user" | "assistant"; content: string }[] = [
     ...input.history,

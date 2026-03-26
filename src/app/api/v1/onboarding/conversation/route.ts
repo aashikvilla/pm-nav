@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     const { sessionId, message } = ConversationSchema.parse(body)
 
     // Load user context
-    const [profile, pmTarget, skillScores] = await Promise.all([
+    const [profile, pmTarget, skillScores, psiEntries, workExperiences] = await Promise.all([
       prisma.profile.findUnique({ where: { userId } }),
       prisma.userPmTarget.findUnique({ where: { userId } }),
       prisma.userSkillScore.findMany({
@@ -34,6 +34,17 @@ export async function POST(req: NextRequest) {
         include: { skill: { include: { category: true } } },
         orderBy: { evidenceScore: "asc" },
         take: 5,
+      }),
+      prisma.psiEntry.findMany({
+        where: { userId },
+        take: 8,
+        orderBy: { confidenceScore: "desc" },
+        select: { problem: true, solution: true, impact: true, confidenceScore: true },
+      }),
+      prisma.workExperience.findMany({
+        where: { userId },
+        take: 5,
+        select: { company: true, title: true, startDate: true, endDate: true, description: true },
       }),
     ])
 
@@ -71,6 +82,28 @@ export async function POST(req: NextRequest) {
         score: Math.round(s.evidenceScore),
       }))
 
+    const currentTurnCount = Math.ceil((turns.length + 2) / 2)
+    const forceComplete = message === "__SKIP__" || currentTurnCount >= 12
+
+    // Handle skip: finalize session without calling AI
+    if (message === "__SKIP__") {
+      await prisma.conversationSession.update({
+        where: { id: convSession.id },
+        data: { status: "completed" },
+      })
+      await prisma.profile.update({
+        where: { userId },
+        data: { onboardingStep: 4 },
+      })
+      await recordActivity(userId, "conversation_completed")
+      return NextResponse.json({
+        reply: "Got it — let's take a look at what we've found so far.",
+        sessionId: convSession.id,
+        isComplete: true,
+        turnCount: currentTurnCount,
+      })
+    }
+
     const result = await runConversationTurn({
       userName: profile?.fullName ?? "there",
       currentRole: profile?.currentJobRole ?? "professional",
@@ -78,7 +111,20 @@ export async function POST(req: NextRequest) {
       topGaps,
       history,
       userMessage: message,
+      workExperiences: workExperiences.map((w) => ({
+        companyName: w.company,
+        jobTitle: w.title,
+        startDate: w.startDate?.toISOString().slice(0, 7) ?? null,
+        endDate: w.endDate?.toISOString().slice(0, 7) ?? null,
+        description: w.description,
+      })),
+      existingPsiEntries: psiEntries,
     })
+
+    // Force complete if we've hit the turn cap
+    if (forceComplete) {
+      result.isComplete = true
+    }
 
     // Store this turn + AI reply
     await prisma.conversationTurn.createMany({
@@ -133,15 +179,13 @@ export async function POST(req: NextRequest) {
       await recordActivity(userId, "conversation_completed")
     }
 
-    const turnCount = Math.ceil((turns.length + 2) / 2) // pairs of turns
-
-    logger.info("Conversation turn processed", { userId, sessionId: convSession.id, turnCount })
+    logger.info("Conversation turn processed", { userId, sessionId: convSession.id, turnCount: currentTurnCount })
 
     return NextResponse.json({
       reply: result.reply,
       sessionId: convSession.id,
       isComplete: result.isComplete,
-      turnCount,
+      turnCount: currentTurnCount,
     })
   } catch (error) {
     if (error instanceof z.ZodError) {

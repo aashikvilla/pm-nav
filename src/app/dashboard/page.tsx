@@ -31,10 +31,12 @@ export default async function DashboardPage() {
 
   const summary = await getDashboardSummary();
 
-  // Onboarding guard
-  if (!summary?.profile?.onboardingCompleted) {
-    const step = summary?.profile?.onboardingStep ?? 0;
-    redirect(ONBOARDING_STEP_URLS[step] ?? "/onboarding/upload");
+  // Onboarding guard — only redirect if explicitly incomplete AND analysis hasn't started
+  if (summary?.profile?.onboardingCompleted === false) {
+    const step = summary.profile.onboardingStep ?? 0;
+    if (step < 3) {
+      redirect(ONBOARDING_STEP_URLS[step] ?? "/onboarding/upload");
+    }
   }
 
   const { profile, readiness, topGaps, psiSummary, streak, activityByDay } = summary;

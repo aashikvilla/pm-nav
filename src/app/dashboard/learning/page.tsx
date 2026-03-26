@@ -70,6 +70,29 @@ export default async function LearningPage() {
   const completedCount = stages.filter((s) => s.status === "completed").length
   const currentStage = stages.find((s) => s.status === "in_progress") ?? stages.find((s) => s.isUnlocked && s.status === "not_started")
 
+  if (stages.length === 0) {
+    return (
+      <div className="max-w-3xl space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-[var(--color-on-surface)] tracking-tight">Your Learning Path</h1>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
+            12 stages from PM fundamentals to offer-ready.
+          </p>
+        </div>
+        <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-10 text-center space-y-3">
+          <p className="text-base font-medium text-[var(--color-on-surface)]">Your learning path is being prepared</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] max-w-sm mx-auto">
+            The 12-stage curriculum hasn&apos;t been seeded yet. Run{" "}
+            <code className="text-xs bg-[var(--color-surface-container-low)] px-1.5 py-0.5 rounded font-mono">
+              pnpm db:seed
+            </code>{" "}
+            to populate the learning stages.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
       {/* Header */}

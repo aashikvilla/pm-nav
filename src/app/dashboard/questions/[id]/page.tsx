@@ -66,12 +66,19 @@ export default async function QuestionDetailPage({ params }: PageProps) {
   const catColor = CATEGORY_COLORS[question.category] ?? "bg-gray-100 text-gray-700"
   const catLabel = CATEGORY_LABELS[question.category] ?? question.category
 
-  const criteria: string[] =
-    Array.isArray(question.evaluationCriteria)
-      ? (question.evaluationCriteria as string[])
-      : typeof question.evaluationCriteria === "string"
-        ? [question.evaluationCriteria]
-        : []
+  const criteria: string[] = (() => {
+    const raw = question.evaluationCriteria
+    if (!raw) return []
+    const arr = Array.isArray(raw) ? raw : typeof raw === "string" ? [raw] : []
+    return arr.map((item: unknown) => {
+      if (typeof item === "string") return item
+      if (item && typeof item === "object" && "criterion" in item) {
+        const o = item as { criterion: string; points?: number }
+        return o.points != null ? `${o.criterion} (${o.points} pts)` : o.criterion
+      }
+      return String(item)
+    })
+  })()
 
   const serializedAttempts = attempts.map((a) => ({
     id: a.id,

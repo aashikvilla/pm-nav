@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { PsiEntriesList } from "@/components/onboarding/psi-entries-list"
 
 interface CategoryScore {
   category: string
@@ -30,18 +31,24 @@ export default async function OnboardingSummaryPage() {
   if (!profile || profile.onboardingStep < 3) redirect("/onboarding/analyzing")
 
   // Load summary data directly (same logic as API route)
-  const [pmTarget, latestSnapshot, psiCount, skillScores] = await Promise.all([
+  const [pmTarget, latestSnapshot, psiEntries, skillScores] = await Promise.all([
     prisma.userPmTarget.findUnique({ where: { userId } }),
     prisma.readinessScoreSnapshot.findFirst({
       where: { userId },
       orderBy: { takenAt: "desc" },
     }),
-    prisma.psiEntry.count({ where: { userId, isVisible: true } }),
+    prisma.psiEntry.findMany({
+      where: { userId, isVisible: true },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, problem: true, solution: true, impact: true },
+    }),
     prisma.userSkillScore.findMany({
       where: { userId },
       include: { skill: { include: { category: true } } },
     }),
   ])
+
+  const psiCount = psiEntries.length
 
   // Group by category
   const categoryMap: Record<string, { name: string; scores: number[] }> = {}
@@ -62,7 +69,10 @@ export default async function OnboardingSummaryPage() {
   const topStrengths = sorted.slice(0, 3)
   const topGaps = [...sorted].sort((a, b) => a.score - b.score).slice(0, 3)
 
-  const overallScore = Math.round(latestSnapshot?.overallScore ?? 0)
+  const rawScore = Math.round(latestSnapshot?.overallScore ?? 0)
+  // Treat scores under 5 as uncalibrated (gap analysis slug mismatch produces near-zero)
+  const scoreIsCalibrated = rawScore >= 5
+  const overallScore = scoreIsCalibrated ? rawScore : 0
   const readyToApply = overallScore >= 70
   const targetRole = ROLE_LABELS[pmTarget?.targetRoleType ?? "consumer"] ?? "PM"
 
@@ -104,14 +114,24 @@ export default async function OnboardingSummaryPage() {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-bold text-[var(--color-on-surface)]">{overallScore}</span>
-              <span className="text-xs text-[var(--color-on-surface-variant)]">/ 100</span>
+              {scoreIsCalibrated ? (
+                <>
+                  <span className="text-4xl font-bold text-[var(--color-on-surface)]">{overallScore}</span>
+                  <span className="text-xs text-[var(--color-on-surface-variant)]">/ 100</span>
+                </>
+              ) : (
+                <span className="text-2xl font-bold text-[var(--color-on-surface-variant)]">—</span>
+              )}
             </div>
           </div>
 
           <div>
             <p className="font-medium text-[var(--color-on-surface)]">Readiness for {targetRole}</p>
-            {readyToApply ? (
+            {!scoreIsCalibrated ? (
+              <p className="text-sm text-[var(--color-on-surface-variant)] mt-1 max-w-xs mx-auto">
+                We&apos;re still calibrating — your score will improve as you complete learning stages
+              </p>
+            ) : readyToApply ? (
               <p className="text-sm text-emerald-600 mt-1 font-medium">You&apos;re ready to start applying</p>
             ) : (
               <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
@@ -121,51 +141,85 @@ export default async function OnboardingSummaryPage() {
           </div>
         </div>
 
+        {/* Per-category skill scores */}
+        {categorySummaries.length > 0 && (
+          <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-6 space-y-4">
+            <h3 className="text-sm font-semibold text-[var(--color-on-surface)]">Skill breakdown by category</h3>
+            <div className="space-y-3">
+              {sorted.map((s) => (
+                <div key={s.category}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-[var(--color-on-surface-variant)]">{s.category}</span>
+                    <span className="text-sm font-semibold text-[var(--color-on-surface)]">{s.score}</span>
+                  </div>
+                  <div className="h-1.5 bg-[var(--color-surface-container-low)] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[var(--color-primary)] rounded-full"
+                      style={{ width: `${Math.min(s.score, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Strengths & gaps */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Top strengths</h3>
-            <div className="space-y-2">
-              {topStrengths.map((s) => (
-                <div key={s.category} className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--color-on-surface)]">{s.category}</span>
-                  <span className="text-sm font-semibold text-emerald-600">{s.score}</span>
-                </div>
-              ))}
-              {topStrengths.length === 0 && (
-                <p className="text-xs text-[var(--color-on-surface-variant)]">Complete more questions to see strengths</p>
-              )}
+        {categorySummaries.length > 0 && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 space-y-3">
+              <h3 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Top strengths</h3>
+              <div className="space-y-2">
+                {topStrengths.map((s) => (
+                  <div key={s.category} className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-[var(--color-on-surface)] truncate">{s.category}</span>
+                    <span className="text-sm font-semibold text-emerald-600 shrink-0">{s.score}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 space-y-3">
+              <h3 className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider">Focus areas</h3>
+              <div className="space-y-2">
+                {topGaps.map((g) => (
+                  <div key={g.category} className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-[var(--color-on-surface)] truncate">{g.category}</span>
+                    <span className="text-sm font-semibold text-[var(--color-primary)] shrink-0">{g.score}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+        )}
 
-          <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 space-y-3">
-            <h3 className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider">Focus areas</h3>
-            <div className="space-y-2">
-              {topGaps.map((g) => (
-                <div key={g.category} className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--color-on-surface)]">{g.category}</span>
-                  <span className="text-sm font-semibold text-[var(--color-primary)]">{g.score}</span>
-                </div>
-              ))}
-              {topGaps.length === 0 && (
-                <p className="text-xs text-[var(--color-on-surface-variant)]">No gaps data yet</p>
-              )}
+        {/* PSI entries */}
+        {psiEntries.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-[var(--color-on-surface)]">
+                {psiCount} experience {psiCount === 1 ? "entry" : "entries"} extracted
+              </h3>
+              <span className="text-xs text-[var(--color-on-surface-variant)]">Problem · Solution · Impact</span>
+            </div>
+            <PsiEntriesList entries={psiEntries} />
+          </div>
+        )}
+
+        {/* PSI count (fallback when no entries to show) */}
+        {psiEntries.length === 0 && (
+          <div className="bg-[var(--color-secondary-fixed)] rounded-2xl p-5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-white bg-opacity-50 flex items-center justify-center text-lg shrink-0">
+              ✦
+            </div>
+            <div>
+              <p className="font-semibold text-[var(--color-on-surface)]">No experience entries yet</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
+                Complete the conversation step to extract your experiences
+              </p>
             </div>
           </div>
-        </div>
-
-        {/* PSI count */}
-        <div className="bg-[var(--color-secondary-fixed)] rounded-2xl p-5 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-white bg-opacity-50 flex items-center justify-center text-lg shrink-0">
-            ✦
-          </div>
-          <div>
-            <p className="font-semibold text-[var(--color-on-surface)]">{psiCount} experience entries extracted</p>
-            <p className="text-sm text-[var(--color-on-surface-variant)]">
-              These form the evidence base for your skill scores
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* CTA */}
         <div className="space-y-3">

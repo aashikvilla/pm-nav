@@ -20,8 +20,43 @@ export default function OnboardingConversationPage() {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [turnCount, setTurnCount] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+
+  const hasSpeechRecognition = typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+
+  function toggleVoiceInput() {
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop()
+      setIsListening(false)
+      return
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) return
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = "en-US"
+    recognitionRef.current = recognition
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let transcript = ""
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript
+      }
+      setInput(transcript)
+    }
+
+    recognition.onerror = () => setIsListening(false)
+    recognition.onend = () => setIsListening(false)
+
+    recognition.start()
+    setIsListening(true)
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -70,7 +105,25 @@ export default function OnboardingConversationPage() {
     }
   }
 
-  const MAX_TURNS = 8
+  const MAX_TURNS = 10
+
+  const handleSkip = async () => {
+    if (isLoading) return
+    setIsLoading(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/v1/onboarding/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, message: "__SKIP__" }),
+      })
+      if (!res.ok) throw new Error("Skip failed")
+      router.push("/onboarding/summary")
+    } catch {
+      setError("Something went wrong. Please try again.")
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -82,23 +135,34 @@ export default function OnboardingConversationPage() {
             Helping surface PM experience not on your resume
           </p>
         </div>
-        {turnCount > 0 && (
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              {Array.from({ length: MAX_TURNS }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
-                    i < turnCount ? "bg-[var(--color-primary)]" : "bg-[var(--color-surface-container)]"
-                  }`}
-                />
-              ))}
+        <div className="flex items-center gap-3">
+          {turnCount >= 2 && (
+            <button
+              onClick={handleSkip}
+              disabled={isLoading}
+              className="text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] underline underline-offset-2 transition-colors disabled:opacity-50"
+            >
+              Skip to results
+            </button>
+          )}
+          {turnCount > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                {Array.from({ length: MAX_TURNS }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
+                      i < turnCount ? "bg-[var(--color-primary)]" : "bg-[var(--color-surface-container)]"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs text-[var(--color-on-surface-variant)]">
+                {turnCount}/{MAX_TURNS}
+              </span>
             </div>
-            <span className="text-xs text-[var(--color-on-surface-variant)]">
-              {turnCount}/{MAX_TURNS}
-            </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Messages */}
@@ -157,6 +221,24 @@ export default function OnboardingConversationPage() {
             disabled={isLoading}
             className="flex-1 resize-none rounded-2xl bg-[var(--color-surface-container-low)] px-4 py-3 text-sm text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all duration-200 disabled:opacity-50"
           />
+          {hasSpeechRecognition && (
+            <button
+              onClick={toggleVoiceInput}
+              disabled={isLoading}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 shrink-0 ${
+                isListening
+                  ? "bg-red-500 text-white animate-pulse"
+                  : "bg-[var(--color-surface-container)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-low)]"
+              } disabled:opacity-40`}
+              title={isListening ? "Stop recording" : "Voice input"}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
+            </button>
+          )}
           <button
             onClick={sendMessage}
             disabled={isLoading || !input.trim()}
@@ -168,7 +250,7 @@ export default function OnboardingConversationPage() {
           </button>
         </div>
         <p className="text-[10px] text-[var(--color-on-surface-variant)] mt-2 text-center">
-          Shift+Enter for new line
+          Shift+Enter for new line{hasSpeechRecognition ? " · Tap mic to use voice" : ""}
         </p>
       </div>
     </div>
