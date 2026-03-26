@@ -1,10 +1,9 @@
-// Model: STRUCTURED (meta-llama/llama-3.3-70b-instruct:free)
-// Rationale: Resume optimisation is a structured transformation task — convert
-// PSI entries into ATS-compliant bullets that match JD keywords and PM vocabulary.
-// Llama 3.3 70B excels at precisely following complex transformation instructions
-// and keyword matching patterns, making it the right balance of capability and
-// speed for this batch-oriented, less time-sensitive task.
-import { orChat, MODELS } from "@/lib/ai/openrouter"
+// Model: qwen/qwen3-next-80b-a3b-instruct:free (primary) → mistral-small-3.1-24b (fallback)
+// Rationale: Resume optimization is JD-to-profile matching + structured generation —
+// exactly what Qwen3 Next is optimized for (RAG + agentic workflows). 262K context
+// handles long JDs + full profiles. 3B active params = very fast for on-demand generation.
+// Mistral Small covers rate limits from a different provider.
+import { orChat } from "@/lib/ai/openrouter"
 
 interface ResumeOptimizeInput {
   psiEntries: { problem: string; solution: string; impact: string }[]
@@ -41,9 +40,9 @@ ${psiText}
 
 Return JSON: {"bullets":[{"original":string,"optimized":string,"keywords":string[]}],"summary":string,"atsScore":number,"keywordMatch":{"matched":string[],"missing":string[]}}`
 
-  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
-    model: MODELS.STRUCTURED,
+  const response = await orChat("resumeOptimizer", SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
     maxTokens: 4096,
+    jsonMode: true,
   })
 
   try {

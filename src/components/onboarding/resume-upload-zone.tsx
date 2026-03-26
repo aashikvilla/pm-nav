@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { FullScreenLoader } from "@/components/ui/page-loader"
 
 type Mode = "upload" | "paste"
 
@@ -89,7 +90,6 @@ export function ResumeUploadZone() {
       router.push("/onboarding/profile")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
-    } finally {
       setIsSubmitting(false)
     }
   }
@@ -101,6 +101,8 @@ export function ResumeUploadZone() {
   }
 
   return (
+    <>
+    {isSubmitting && <FullScreenLoader message="Parsing your resume..." />}
     <div className="w-full max-w-2xl mx-auto space-y-6">
       {/* Mode toggle */}
       <div className="flex bg-[var(--color-surface-container-low)] rounded-full p-1 w-fit">
@@ -206,5 +208,6 @@ export function ResumeUploadZone() {
         {isSubmitting ? "Analyzing your resume..." : "Analyze my resume →"}
       </button>
     </div>
+    </>
   )
 }

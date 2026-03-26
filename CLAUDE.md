@@ -1,196 +1,54 @@
 # PM Career Navigation Platform — Agent Context
 
 ## What We're Building
+Career navigation platform for PM career switchers. Core loop: Resume Upload → AI Parsing → Gap-Fill Chat → Skill Gap Dashboard → Learning Path → Resume Builder.
 
-A career navigation platform for professionals transitioning into Product Management. The platform:
-1. **Extracts** PM-relevant experience from a user's existing work (PSI: Problem → Solution → Impact)
-2. **Assesses** skill gaps by mapping experience against a role-weighted taxonomy (38 skills, 8 categories, 6 PM role types)
-3. **Guides** via a personalized gated learning path (12 stages)
-4. **Proves** via AI-evaluated assignments building a public profile
-5. **Applies** via a resume builder that auto-generates JD-specific resumes
+**MVP (done):** Onboarding (5 steps) + Skill Gap Dashboard + PSI view. Next: learning path, resume builder, question bank, public profile.
 
-**Core loop:** Resume Upload → AI Parsing → Gap-Fill Conversation → Skill Gap Dashboard → Learning Path → Resume Builder
-
-## ⚠️ MVP FOCUS (Current Sprint)
-We are only building the first end-to-end flow:
-1. **Onboarding** (resume upload → profile form → AI analysis → conversation → skill summary)
-2. **Skill Gap Dashboard** (readiness score + category breakdown)
-3. **PSI Experience View** (the extracted + reframed experiences)
-
-Learning path, resume builder, question bank, and public profile come **after** this flow works end-to-end.
-
----
-
-## Spec Docs (Read Before Working on Any Feature)
-
-| Doc | What It Contains |
-|-----|-----------------|
-| `docs/spec/solution-doc.md` | **Start here.** Full engineering spec: flows, wireframes, DB schema, AI agents, APIs |
-| `docs/spec/content-research-output.md` | Skills taxonomy validation, question bank, learning stage content |
-| `docs/spec/design.md` | Design system: Quiet Authority aesthetic, colors, typography, component rules |
-| `docs/spec/designs/*/screen.png` | Visual design references (14 screens with HTML prototypes) |
-| `docs/spec/designs/*/code.html` | Interactive HTML prototypes — open in browser to see the design |
-
-**Key design refs for MVP:**
-- `docs/spec/designs/onboarding_resume_upload/` — Step 1 UI
-- `docs/spec/designs/onboarding_profile_details/` — Step 2 UI
-- `docs/spec/designs/analysis_loading_v1/` — Step 3 loading UI
-- `docs/spec/designs/gap_filling_chat_v1/` — Step 4 conversation UI
-- `docs/spec/designs/analysis_dashboard_v2/` — Skill gap dashboard UI ← primary reference
-- `docs/spec/designs/detailed_master_profile/` — PSI entries view
-
----
+## Spec Docs
+- `docs/spec/solution-doc.md` — Full engineering spec (start here for any new feature)
+- `docs/spec/design.md` — Design system details
+- `docs/spec/designs/*/screen.png` + `code.html` — 14 screen references
 
 ## Tech Stack
-
-| Layer | Choice | Notes |
-|-------|--------|-------|
-| Framework | Next.js 16 App Router | Server Components by default |
-| Language | TypeScript | Strict mode |
-| Database | Supabase PostgreSQL | Project ID: `wfbrcnysrumknuhwfxdg` |
-| ORM | Prisma 7 | Schema in `prisma/schema.prisma`, client in `src/generated/prisma` |
-| Auth | NextAuth v5 | Config in `src/lib/auth.ts` |
-| Styling | Tailwind CSS v4 + shadcn/ui | CSS-only config via `@theme` in `globals.css` |
-| AI (primary) | Anthropic Claude Sonnet | Via `src/lib/ai/anthropic.ts` → `claudeChat()` |
-| AI (fast/cheap) | OpenAI GPT-4o-mini | Via `src/lib/ai/openai.ts` → `gptChat()` |
-| Deployment | Vercel | Auto-deploy from `main` branch |
-
----
-
-## Repository Structure
-
-```
-src/
-  app/
-    (public)/              ← Landing page, discover quiz, public profile
-    (auth)/login/          ← Sign in page
-    (auth)/signup/         ← Sign up page
-    onboarding/
-      upload/              ← Step 1: Resume upload
-      profile/             ← Step 2: Profile + PM target form
-      analyzing/           ← Step 3: AI processing loading
-      conversation/        ← Step 4: Gap-filling AI chat
-      summary/             ← Step 5: PSI + skill gap summary
-    dashboard/
-      page.tsx             ← Skill gap dashboard (main)
-      learning/            ← Learning path (later sprint)
-      questions/           ← Question bank (later sprint)
-      resume/              ← Resume builder (later sprint)
-      profile/             ← Edit profile (later sprint)
-      applications/        ← Application tracker (later sprint)
-    api/
-      auth/[...nextauth]/  ← NextAuth handler (DO NOT MODIFY)
-      v1/                  ← All feature API routes
-  components/
-    ui/                    ← shadcn/ui base components (DO NOT MODIFY)
-    layout/sidebar.tsx     ← App sidebar (shared)
-    onboarding/            ← Onboarding-specific components
-    dashboard/             ← Dashboard widgets
-  lib/
-    auth.ts                ← NextAuth config (DO NOT MODIFY)
-    prisma.ts              ← Prisma singleton (DO NOT MODIFY)
-    logger.ts              ← Structured logger — use instead of console.log
-    ai/
-      anthropic.ts         ← Claude client (DO NOT MODIFY)
-      openai.ts            ← OpenAI client (DO NOT MODIFY)
-      agents/              ← AI agent functions (add new agents here)
-  generated/prisma/        ← Auto-generated (DO NOT EDIT)
-prisma/
-  schema.prisma            ← Full DB schema
-  seed.ts                  ← Seed data (run: pnpm prisma db seed)
-docs/spec/                 ← Engineering spec + design references
-PLAN.md                    ← Detailed task plan for all feature agents
-```
-
----
+- **Framework:** Next.js 16 App Router (Server Components by default)
+- **DB:** Supabase PostgreSQL — Prisma 7 ORM (`prisma/schema.prisma`, client in `src/generated/prisma`)
+- **Auth:** NextAuth v5 (`src/lib/auth.ts` — DO NOT MODIFY)
+- **Styling:** Tailwind CSS v4 + shadcn/ui (`src/components/ui/` — DO NOT MODIFY)
+- **AI:** OpenRouter free models via `src/lib/ai/openrouter.ts` → `orChat()`
+  - `MODELS.REASONING` = Hermes 3 405B (PSI reframing, gap analysis)
+  - `MODELS.STRUCTURED` = Llama 3.3 70B (resume parsing, conversation)
+- **Deploy:** Vercel — auto-deploy from `main`
 
 ## Branch Strategy
-
-```
-main          ← production (Vercel deploy, protected — PR only)
-  └── develop ← integration (all feature PRs merge here first)
-        ├── feat/onboarding    ← Resume upload → AI analysis → PSI chat
-        ├── feat/dashboard     ← Skill gap dashboard + readiness score
-        ├── feat/auth          ← Login/signup pages
-        ├── feat/landing       ← Landing page + discover quiz (later)
-        ├── feat/learning      ← Learning path (later sprint)
-        ├── feat/resume        ← Resume builder (later sprint)
-        ├── feat/questions     ← Question bank (later sprint)
-        └── feat/profile       ← Public profile (later sprint)
-```
-
-**Rules:**
-- Branch FROM `develop`, PR back TO `develop`
-- Each branch owns specific files/folders — see PLAN.md for ownership map
-- No two branches modify the same file (except `develop` merges)
-
----
+`main` (prod) ← `develop` (integration) ← feature branches. Branch FROM `develop`, PR TO `develop`.
 
 ## Key Conventions (Non-Negotiable)
+1. **Server Components by default** — `"use client"` only for event handlers/hooks/browser APIs
+2. **DB via Prisma only** — `import { prisma } from "@/lib/prisma"` — no raw SQL
+3. **AI via agents only** — `src/lib/ai/agents/*` — never inline `orChat()` in routes
+4. **No `console.log`** — use `logger` from `@/lib/logger`
+5. **Zod validation** on all API inputs
+6. **Every page:** Loading (Suspense + skeleton) + Empty state + Error (error.tsx) + Success
 
-### Code
-1. **Server Components by default** — add `"use client"` only for event handlers, hooks, browser APIs
-2. **All DB access via Prisma** — `import { prisma } from "@/lib/prisma"` — never raw SQL in components
-3. **All AI calls via agents** — use functions in `src/lib/ai/agents/*` — never inline `anthropic.messages.create()`
-4. **No `console.log`** — use `import { logger } from "@/lib/logger"` → `logger.info/warn/error()`
-5. **Zod validation** on all API route inputs
-6. **Every page must handle:** Loading (Suspense + skeleton), Empty state, Error (error.tsx), Success
+## Design System (Quiet Authority)
+- **No 1px borders** between sections — use background color shifts instead
+- **Surfaces:** `bg-[var(--color-surface)]` (page) → `bg-[var(--color-surface-container-low)]` (sections) → `bg-[var(--color-surface-container-lowest)]` (cards/white)
+- **Text:** `text-[var(--color-on-surface)]` (#191c1d) primary, `text-[var(--color-on-surface-variant)]` (#464555) secondary
+- **Primary:** `bg-[var(--color-primary)]` (#3525cd), `rounded-full` buttons
+- **Amber accent** `bg-[var(--color-secondary-fixed)]` (#ffddb8) — milestones/primary CTAs only
+- **No gamification** — no badges, bright progress bars, confetti
 
-### Design System (Quiet Authority — Non-Negotiable)
-- **NO 1px opaque borders** to separate sections — use background color shifts
-- **Surface hierarchy:** `#f8f9fa` (base) → `#f3f4f5` (sections) → `#ffffff` (cards)
-- **Text:** always `#191c1d` — never `text-black` or `#000000`
-- **Primary:** `#3525cd` indigo, `rounded-full` buttons
-- **Amber accent** `#ffddb8` — use ONLY for milestones/primary CTAs
-- **Transitions:** `transition-all duration-200` on interactive elements
-- **No gamification** — no bright progress bars, no badges, no confetti
+## What's Built (don't re-implement)
+- `src/app/onboarding/` — all 5 steps complete (upload, profile, analyzing, conversation, summary)
+- `src/app/dashboard/page.tsx` + `psi/` — dashboard + PSI entries view complete
+- `src/app/(auth)/` — login + signup with Google OAuth complete
+- `src/app/api/v1/onboarding/` — all API routes complete
+- `src/lib/ai/agents/` — all 4 MVP agents complete (resume-parser, psi-reframer, gap-analyzer, conversation-agent)
+- `src/lib/scores.ts`, `streak.ts`, `onboarding.ts` — all utilities complete
 
-### CSS Variables (Tailwind v4 — use in className)
-```
-bg-[var(--color-primary)]                  → #3525cd
-bg-[var(--color-primary-fixed)]            → #e8e5ff (light indigo bg)
-bg-[var(--color-secondary-fixed)]          → #ffddb8 (amber accent)
-bg-[var(--color-surface)]                  → #f8f9fa (page bg)
-bg-[var(--color-surface-container-low)]    → #f3f4f5 (section bg)
-bg-[var(--color-surface-container)]        → #edeeef (hover bg)
-bg-[var(--color-surface-container-lowest)] → #ffffff (card bg)
-text-[var(--color-on-surface)]             → #191c1d (primary text)
-text-[var(--color-on-surface-variant)]     → #464555 (secondary text)
-```
-
----
-
-## Supabase Project
-
-- **Project ID:** `wfbrcnysrumknuhwfxdg`
-- **URL:** `https://wfbrcnysrumknuhwfxdg.supabase.co`
-- **Region:** ap-south-1 (Mumbai)
-- **Extensions:** `vector` (pgvector), `uuid-ossp`, `pg_trgm`
-- **All 30+ tables created** via migrations — see `prisma/schema.prisma` for full schema
-
----
-
-## First-Time Setup
-
-```bash
-cp .env.example .env
-# Fill in: DATABASE_URL, GOOGLE_CLIENT_ID/SECRET, ANTHROPIC_API_KEY, OPENAI_API_KEY, NEXTAUTH_SECRET
-
-pnpm install
-pnpm prisma generate
-pnpm prisma db seed
-pnpm dev
-```
-
----
-
-## AI Agents Available
-
-| Agent | File | Model | Purpose |
-|-------|------|-------|---------|
-| Resume Parser | `agents/resume-parser.ts` | GPT-4o-mini | Resume text → structured JSON |
-| PSI Reframer | `agents/psi-reframer.ts` | Claude Sonnet | Work bullet → Problem/Solution/Impact |
-| Gap Analyzer | `agents/gap-analyzer.ts` | Claude Sonnet | PSI entries → skill scores + gaps |
-| Assignment Evaluator | `agents/assignment-evaluator.ts` | Claude Sonnet | Submission + rubric → score |
-| Question Evaluator | `agents/question-evaluator.ts` | Claude Sonnet | Answer → score + feedback |
-| Resume Optimizer | `agents/resume-optimizer.ts` | GPT-4o-mini | PSI + JD → optimized bullets |
+## Next Sprint Targets
+- `src/app/dashboard/learning/` — 12-stage learning path
+- `src/app/dashboard/questions/` — question bank / quiz
+- `src/app/dashboard/resume/` — resume builder
+- `src/app/(public)/` — landing page + discover quiz

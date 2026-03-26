@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import { AuthSessionProvider } from "@/components/session-provider";
+import { PageLoader } from "@/components/ui/page-loader";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,7 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[var(--color-surface)] text-[var(--color-on-surface)]">
-        <AuthSessionProvider>{children}</AuthSessionProvider>
+        <AuthSessionProvider>
+          <Suspense>
+            <PageLoader />
+          </Suspense>
+          {children}
+        </AuthSessionProvider>
       </body>
     </html>
   );

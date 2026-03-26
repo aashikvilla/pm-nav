@@ -1,9 +1,9 @@
-// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
-// Rationale: Assignment evaluation requires genuine PM domain expertise to score
-// submissions against nuanced rubric criteria. A 70B model may miss subtle PM
-// thinking patterns; the 405B Hermes model's depth gives it the judgment needed
-// to provide accurate, actionable feedback that mirrors a senior PM hiring manager.
-import { orChat, MODELS } from "@/lib/ai/openrouter"
+// Model: stepfun/step-3.5-flash:free (primary) → deepseek/deepseek-chat-v3.1 (fallback)
+// Rationale: Assignments can be long (1-2 pages). Step 3.5 Flash's 256K context handles
+// full submissions + rubric comfortably. Ranks highly on academic/analytical tasks —
+// ideal for rubric-based evaluation. Same provider split as gap-analyzer to maximize
+// rate limit headroom (StepFun primary, DeepSeek fallback).
+import { orChat } from "@/lib/ai/openrouter"
 
 interface EvaluationInput {
   assignmentTitle: string
@@ -48,8 +48,8 @@ Evaluate and return JSON: {
   "improvementAreas": string[]
 }`
 
-  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
-    model: MODELS.REASONING,
+  const response = await orChat("assignmentEvaluator", SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    jsonMode: true,
   })
 
   try {

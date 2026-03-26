@@ -56,7 +56,9 @@ export async function POST(req: NextRequest) {
       orderBy: { createdAt: "asc" },
     })
 
-    const history = turns.map((t) => ({
+    // Cap history at last 6 turns (3 exchanges) to limit token growth per call
+    const recentTurns = turns.slice(-6)
+    const history = recentTurns.map((t) => ({
       role: t.role as "user" | "assistant",
       content: t.content,
     }))

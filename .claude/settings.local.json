@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:costgoat.com)",
+      "WebFetch(domain:brainroad.com)"
+    ]
+  }
+}

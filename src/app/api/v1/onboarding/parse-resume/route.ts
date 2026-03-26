@@ -2,6 +2,7 @@ export const runtime = "nodejs"
 export const maxDuration = 60
 
 import { NextRequest, NextResponse } from "next/server"
+import { extractText, getDocumentProxy } from "unpdf"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { parseResume } from "@/lib/ai/agents/resume-parser"
@@ -9,6 +10,7 @@ import { recordActivity } from "@/lib/streak"
 import { logger } from "@/lib/logger"
 
 export async function POST(req: NextRequest) {
+
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -40,11 +42,10 @@ export async function POST(req: NextRequest) {
           resumeText = await file.text()
         } else {
           // PDF parsing
-          const buffer = Buffer.from(await file.arrayBuffer())
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const pdfParse = require("pdf-parse")
-          const data = await pdfParse(buffer)
-          resumeText = data.text
+          const buffer = new Uint8Array(await file.arrayBuffer())
+          const pdf = await getDocumentProxy(buffer)
+          const { text } = await extractText(pdf, { mergePages: true })
+          resumeText = text
         }
       } else {
         return NextResponse.json({ error: "No file or text provided" }, { status: 400 })
@@ -108,7 +109,7 @@ export async function POST(req: NextRequest) {
       parsedName: parsed.fullName,
     })
   } catch (error) {
-    logger.error("Failed to parse resume", { userId, error })
+    logger.error("Failed to parse resume", { userId, error: JSON.stringify(error) })
     return NextResponse.json({ error: "Failed to parse resume. Please try again." }, { status: 500 })
   }
 }

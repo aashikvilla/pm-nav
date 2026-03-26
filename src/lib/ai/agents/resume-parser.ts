@@ -1,8 +1,7 @@
-// Model: STRUCTURED (meta-llama/llama-3.3-70b-instruct:free)
-// Rationale: Resume parsing is schema-constrained JSON extraction. Llama 3.3 70B
-// leads free-tier benchmarks for instruction-following and structured output —
-// reliably returns well-formed JSON matching the expected schema.
-import { orChat, MODELS } from "@/lib/ai/openrouter"
+// Model: openai/gpt-oss-120b:free (primary) → mistral-small-3.1-24b (fallback)
+// Rationale: Extraction task, not reasoning. GPT-OSS 120B has native structured output
+// from OpenAI training heritage. Mistral covers rate-limit spills from a different provider.
+import { orChat } from "@/lib/ai/openrouter"
 
 interface ParsedResume {
   fullName: string
@@ -44,9 +43,10 @@ export async function parseResume(resumeText: string): Promise<ParsedResume> {
 }`
 
   const response = await orChat(
+    "resumeParser",
     SYSTEM_PROMPT,
     [{ role: "user", content: `Parse this resume and return JSON matching this schema:\n${schema}\n\nResume:\n${resumeText}` }],
-    { model: MODELS.STRUCTURED, maxTokens: 4096 },
+    { maxTokens: 4096, jsonMode: true },
   )
 
   try {

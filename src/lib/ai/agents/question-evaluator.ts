@@ -1,10 +1,8 @@
-// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
-// Rationale: PM interview answer evaluation requires understanding what "good"
-// looks like in PM interviews across 7 question categories (product sense,
-// analytical, strategy, behavioral, technical, estimation, execution). Hermes
-// 405B's deep reasoning gives it the ability to identify nuanced PM thinking
-// patterns that distinguish strong answers from surface-level ones.
-import { orChat, MODELS } from "@/lib/ai/openrouter"
+// Model: deepseek/deepseek-chat-v3.1:free (primary) → stepfun/step-3.5-flash (fallback)
+// Rationale: Question evaluation needs nuanced rubric reasoning to distinguish strong vs
+// surface-level PM answers. DeepSeek V3.1 has near-o1 reasoning quality. Using DeepSeek
+// here (vs StepFun for assignment-evaluator) splits load across providers.
+import { orChat } from "@/lib/ai/openrouter"
 
 interface QuestionEvalInput {
   question: string
@@ -42,8 +40,8 @@ ${input.userResponse}
 
 Return JSON: {"totalScore":number,"breakdown":[{"criterion":string,"score":number,"maxPoints":number,"comment":string}],"feedback":string,"missedKeyPoints":string[],"strongPoints":string[]}`
 
-  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
-    model: MODELS.REASONING,
+  const response = await orChat("questionEvaluator", SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
+    jsonMode: true,
   })
 
   try {

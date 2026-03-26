@@ -1,10 +1,8 @@
-// Model: REASONING (nousresearch/hermes-3-llama-3.1-405b:free)
-// Rationale: PSI reframing is the most nuanced task in the pipeline — it must
-// interpret ambiguous work bullets through a PM lens, distinguish business/user
-// problems from technical tasks, and write compelling problem-solution-impact
-// narratives. Hermes 3 405B's fine-tuning for "advanced reasoning and roleplaying"
-// makes it the strongest free model for this kind of domain-specific creative rewriting.
-import { orChat, MODELS } from "@/lib/ai/openrouter"
+// Model: deepseek/deepseek-chat-v3.1:free (primary) → stepfun/step-3.5-flash (fallback)
+// Rationale: PSI reframing is the hardest agent task — contextual inference + PM-lens creative writing.
+// DeepSeek V3.1 is the strongest free reasoning model. Step 3.5 Flash covers DeepSeek rate limits
+// from a different provider (StepFun vs DeepSeek).
+import { orChat } from "@/lib/ai/openrouter"
 
 interface WorkBullet {
   company: string
@@ -30,27 +28,57 @@ Rules:
 - Confidence score 0-100: how strong is the PM signal in this bullet
 - skillsHinted: list PM skill slugs from: product-thinking, user-research, data-analysis, prioritization, stakeholder-management, technical-acumen, execution, communication, business-acumen, leadership
 
-Return ONLY valid JSON. No markdown.`
+Return ONLY valid JSON array. No markdown.`
 
-export async function reframeToPsi(bullet: WorkBullet): Promise<PsiResult> {
-  const prompt = `Reframe this work experience into PSI format:
+/**
+ * Batch reframe multiple bullets in a single API call to minimize token usage.
+ * Returns results in the same order as the input array.
+ * Falls back gracefully — any failed parse returns a low-confidence placeholder.
+ */
+export async function reframeBatch(bullets: WorkBullet[]): Promise<PsiResult[]> {
+  if (bullets.length === 0) return []
 
-Company: ${bullet.company}
-Role: ${bullet.title}
-Experience: ${bullet.bullet}
-${bullet.context ? `Additional context: ${bullet.context}` : ""}
+  const prompt = bullets
+    .map(
+      (b, i) =>
+        `[${i}] Company: ${b.company} | Role: ${b.title} | Experience: ${b.bullet}${b.context ? ` | Context: ${b.context}` : ""}`,
+    )
+    .join("\n")
 
-Return JSON: {"problem":string,"solution":string,"impact":string,"confidenceScore":number,"skillsHinted":string[]}`
-
-  const response = await orChat(SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
-    model: MODELS.REASONING,
-  })
+  const response = await orChat(
+    "psiReframer",
+    SYSTEM_PROMPT,
+    [
+      {
+        role: "user",
+        content: `Reframe these ${bullets.length} work experiences into PSI format.\n\n${prompt}\n\nReturn JSON array with ${bullets.length} objects, one per entry in order:\n[{"problem":string,"solution":string,"impact":string,"confidenceScore":number,"skillsHinted":string[]},...]`,
+      },
+    ],
+    { maxTokens: 300 * bullets.length },
+  )
 
   try {
-    const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
-    const jsonStr = jsonMatch ? jsonMatch[1] : response.trim()
-    return JSON.parse(jsonStr) as PsiResult
+    // Try code block first, then raw response, then find first JSON array
+    const codeBlock = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+    const arrayMatch = response.match(/\[[\s\S]*\]/)
+    const jsonStr = codeBlock ? codeBlock[1] : arrayMatch ? arrayMatch[0] : response.trim()
+    const parsed = JSON.parse(jsonStr) as PsiResult[]
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return bullets.map((_, i) => parsed[i] ?? fallback())
+    }
   } catch {
-    throw new Error("Failed to parse PSI JSON from AI response")
+    // ignore parse errors
   }
+
+  return bullets.map(fallback)
+}
+
+function fallback(): PsiResult {
+  return { problem: "", solution: "", impact: "", confidenceScore: 0, skillsHinted: [] }
+}
+
+/** Single-bullet convenience wrapper. */
+export async function reframeToPsi(bullet: WorkBullet): Promise<PsiResult> {
+  const results = await reframeBatch([bullet])
+  return results[0]
 }

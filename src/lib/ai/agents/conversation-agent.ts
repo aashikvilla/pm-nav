@@ -1,10 +1,9 @@
-// Model: STRUCTURED (meta-llama/llama-3.3-70b-instruct:free)
-// Rationale: The gap-fill conversation is real-time (user is waiting). Llama 3.3
-// 70B is explicitly optimised for "multilingual dialogue use cases" and is
-// significantly faster than the 405B model — critical for interactive chat UX.
-// It reliably follows the structured instruction format (PSI extraction tags,
-// [COMPLETE] signal) while maintaining warm, coaching-style conversation.
-import { orChat, MODELS } from "@/lib/ai/openrouter"
+// Model: meta-llama/llama-3.3-70b-instruct:free (primary) → openai/gpt-oss-120b (fallback)
+// Rationale: Conversation agent talks directly to users — tone and warmth matter most.
+// Llama 3.3 70B is the most community-tested conversational model with strong multilingual
+// support (critical for our Indian user base). Full 70B dense model = more coherent than MoE
+// for multi-turn dialogue. GPT-OSS 120B covers rate limits from a different provider.
+import { orChat } from "@/lib/ai/openrouter"
 
 export interface PsiSignal {
   problem: string
@@ -67,7 +66,7 @@ Candidate context:
     { role: "user", content: input.userMessage },
   ]
 
-  const response = await orChat(systemPrompt, messages, { model: MODELS.STRUCTURED })
+  const response = await orChat("conversationAgent", systemPrompt, messages, { maxTokens: 400 })
 
   const isComplete = response.includes("[COMPLETE]")
 

@@ -9,13 +9,32 @@ export default async function OnboardingProfilePage() {
   if (!session?.user?.id) redirect("/login")
   const userId = session.user.id
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId },
-    select: { onboardingStep: true, fullName: true },
-  })
+  const [profile, recentExp] = await Promise.all([
+    prisma.profile.findUnique({
+      where: { userId },
+      select: { onboardingStep: true, fullName: true, currentJobRole: true, yearsExperience: true, currentIndustry: true },
+    }),
+    prisma.workExperience.findFirst({
+      where: { userId, isCurrent: true },
+      select: { title: true },
+      orderBy: { startDate: "desc" },
+    }),
+  ])
 
   if (!profile || profile.onboardingStep < 1) redirect("/onboarding/upload")
   if (profile.onboardingStep > 2) redirect(await getOnboardingRedirect(userId))
+
+  // Infer recommended PM role from industry
+  const industry = profile.currentIndustry ?? ""
+  const recommendedRole = (() => {
+    if (/tech|software|saas|startup/i.test(industry)) return "technical"
+    if (/finance|fintech|banking/i.test(industry)) return "b2b"
+    if (/health|medical|pharma/i.test(industry)) return "b2b"
+    if (/ecom|retail|consumer/i.test(industry)) return "consumer"
+    if (/media|entertain/i.test(industry)) return "consumer"
+    if (/consult/i.test(industry)) return "b2b"
+    return "consumer"
+  })()
 
   return (
     <div className="flex-1 flex flex-col items-center px-6 py-16">
@@ -29,7 +48,12 @@ export default async function OnboardingProfilePage() {
           </p>
         </div>
 
-        <ProfileForm defaultName={profile.fullName ?? undefined} />
+        <ProfileForm
+          defaultName={profile.fullName ?? undefined}
+          defaultJobRole={recentExp?.title ?? profile.currentJobRole ?? undefined}
+          defaultYearsExperience={profile.yearsExperience ?? undefined}
+          recommendedRole={recommendedRole}
+        />
       </div>
     </div>
   )

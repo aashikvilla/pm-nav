@@ -4,7 +4,7 @@ export const maxDuration = 300
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { reframeToPsi } from "@/lib/ai/agents/psi-reframer"
+import { reframeBatch } from "@/lib/ai/agents/psi-reframer"
 import { analyzeGaps } from "@/lib/ai/agents/gap-analyzer"
 import { calculateCategoryScores, calculateReadinessScore } from "@/lib/scores"
 import { recordActivity } from "@/lib/streak"
@@ -32,10 +32,7 @@ export async function POST(req: NextRequest) {
     ])
 
     if (!workExperiences.length) {
-      await prisma.profile.update({
-        where: { userId },
-        data: { analysisStatus: "failed" },
-      })
+      await prisma.profile.update({ where: { userId }, data: { analysisStatus: "failed" } })
       return NextResponse.json({ error: "No work experience found. Please upload your resume first." }, { status: 400 })
     }
 
@@ -76,8 +73,8 @@ export async function POST(req: NextRequest) {
     // Clear existing PSI entries for this user
     await prisma.psiEntry.deleteMany({ where: { userId } })
 
-    // Reframe bullets in parallel batches of 4
-    const BATCH_SIZE = 4
+    // Reframe bullets in batches of 8 (single API call per batch — reduces token overhead)
+    const BATCH_SIZE = 8
     const psiResults: Array<{
       workExperienceId: string
       problem: string
@@ -89,19 +86,17 @@ export async function POST(req: NextRequest) {
 
     for (let i = 0; i < allBullets.length; i += BATCH_SIZE) {
       const batch = allBullets.slice(i, i + BATCH_SIZE)
-      const results = await Promise.allSettled(
-        batch.map((b) =>
-          reframeToPsi({ company: b.company, title: b.title, bullet: b.bullet }),
-        ),
-      )
-      for (let j = 0; j < results.length; j++) {
-        const r = results[j]
-        if (r.status === "fulfilled" && r.value.confidenceScore >= 20) {
-          psiResults.push({
-            workExperienceId: batch[j].workExperienceId,
-            ...r.value,
-          })
+      try {
+        const results = await reframeBatch(
+          batch.map((b) => ({ company: b.company, title: b.title, bullet: b.bullet })),
+        )
+        for (let j = 0; j < results.length; j++) {
+          if (results[j].confidenceScore >= 20) {
+            psiResults.push({ workExperienceId: batch[j].workExperienceId, ...results[j] })
+          }
         }
+      } catch(error) {
+        logger.warn("PSI batch failed, skipping", { batchStart: i, error })
       }
     }
 
@@ -159,8 +154,19 @@ export async function POST(req: NextRequest) {
       currentRole: profile?.currentJobRole ?? "Professional",
     }
 
-    logger.info("Running gap analysis", { userId })
-    const gapResult = await analyzeGaps(gapInput)
+    logger.info("Running gap analysis", { userId, psiCount: psiResults.length })
+
+    // If all PSI batches failed, run gap analysis with raw experience descriptions as fallback
+    const effectivePsiEntries = psiResults.length > 0
+      ? gapInput.psiEntries
+      : workExperiences.slice(0, 5).map((w) => ({
+          problem: w.description ?? w.title,
+          solution: w.title,
+          impact: "",
+          skillsHinted: [],
+        }))
+
+    const gapResult = await analyzeGaps({ ...gapInput, psiEntries: effectivePsiEntries })
 
     // Upsert skill scores
     const skillScoreOps = Object.entries(gapResult.skillScores).map(([slug, score]) => {
