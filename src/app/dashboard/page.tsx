@@ -130,7 +130,7 @@ export default async function DashboardPage() {
         </h1>
         <div className="flex items-center gap-4">
           <Link
-            href="/dashboard/psi"
+            href="/dashboard/skills"
             className="text-sm text-[var(--color-primary)] font-medium hover:opacity-80 transition-opacity"
           >
             View Skill Analysis
