@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 type ResourceType = "article" | "video" | "exercise" | "tool"
 
@@ -37,6 +38,7 @@ export function ResourceItem({
   estimatedMinutes,
   isCompleted: initialCompleted,
 }: ResourceItemProps) {
+  const router = useRouter()
   const [completed, setCompleted] = useState(initialCompleted)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -57,6 +59,7 @@ export function ResourceItem({
         return
       }
       setCompleted(true)
+      router.refresh()
     } catch {
       setError("Network error. Please try again.")
     } finally {

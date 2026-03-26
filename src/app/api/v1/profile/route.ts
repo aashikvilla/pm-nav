@@ -10,6 +10,9 @@ const UpdateProfileSchema = z.object({
   fullName: z.string().max(120).optional(),
   bio: z.string().max(1000).optional(),
   linkedinUrl: z.string().url().optional().or(z.literal("")),
+  githubUrl: z.string().url().optional().or(z.literal("")),
+  portfolioUrl: z.string().url().optional().or(z.literal("")),
+  profileImageUrl: z.string().url().optional().or(z.literal("")),
   location: z.string().max(120).optional(),
   currentJobRole: z.string().max(120).optional(),
   yearsExperience: z.number().int().min(0).max(50).optional(),
@@ -66,6 +69,9 @@ export async function PUT(req: NextRequest) {
       fullName,
       bio,
       linkedinUrl,
+      githubUrl,
+      portfolioUrl,
+      profileImageUrl,
       location,
       currentJobRole,
       yearsExperience,
@@ -92,6 +98,9 @@ export async function PUT(req: NextRequest) {
     if (fullName !== undefined) profileData.fullName = fullName || null
     if (bio !== undefined) profileData.bio = bio || null
     if (linkedinUrl !== undefined) profileData.linkedinUrl = linkedinUrl || null
+    if (githubUrl !== undefined) profileData.githubUrl = githubUrl || null
+    if (portfolioUrl !== undefined) profileData.portfolioUrl = portfolioUrl || null
+    if (profileImageUrl !== undefined) profileData.profileImageUrl = profileImageUrl || null
     if (location !== undefined) profileData.location = location || null
     if (currentJobRole !== undefined) profileData.currentJobRole = currentJobRole || null
     if (yearsExperience !== undefined) profileData.yearsExperience = yearsExperience

@@ -6,6 +6,9 @@ interface Profile {
   fullName: string | null
   bio: string | null
   linkedinUrl: string | null
+  githubUrl: string | null
+  portfolioUrl: string | null
+  profileImageUrl: string | null
   location: string | null
   currentJobRole: string | null
   yearsExperience: number | null
@@ -74,6 +77,9 @@ export function ProfileForm({ initialProfile, initialSettings }: ProfileFormProp
     fullName: initialProfile?.fullName ?? "",
     bio: initialProfile?.bio ?? "",
     linkedinUrl: initialProfile?.linkedinUrl ?? "",
+    githubUrl: initialProfile?.githubUrl ?? "",
+    portfolioUrl: initialProfile?.portfolioUrl ?? "",
+    profileImageUrl: initialProfile?.profileImageUrl ?? "",
     location: initialProfile?.location ?? "",
     currentJobRole: initialProfile?.currentJobRole ?? "",
     yearsExperience: initialProfile?.yearsExperience?.toString() ?? "",
@@ -109,6 +115,9 @@ export function ProfileForm({ initialProfile, initialSettings }: ProfileFormProp
         fullName: form.fullName,
         bio: form.bio,
         linkedinUrl: form.linkedinUrl,
+        githubUrl: form.githubUrl,
+        portfolioUrl: form.portfolioUrl,
+        profileImageUrl: form.profileImageUrl,
         location: form.location,
         currentJobRole: form.currentJobRole,
         profileSlug: form.profileSlug,
@@ -148,6 +157,31 @@ export function ProfileForm({ initialProfile, initialSettings }: ProfileFormProp
       {/* Basic Info */}
       <div className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-6 shadow-[var(--shadow-ambient)]">
         <h2 className="text-base font-semibold text-[var(--color-on-surface)] mb-6">Basic Information</h2>
+
+        {/* Profile Image */}
+        <div className="flex items-center gap-5 mb-6">
+          <div className="w-16 h-16 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-2xl font-bold flex-shrink-0 overflow-hidden">
+            {form.profileImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={form.profileImageUrl} alt="" className="w-full h-full object-cover" />
+            ) : (
+              (form.fullName || "?")[0]?.toUpperCase()
+            )}
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">
+              Profile Image URL
+            </label>
+            <input
+              type="url"
+              value={form.profileImageUrl}
+              onChange={(e) => handleChange("profileImageUrl", e.target.value)}
+              placeholder="https://example.com/your-photo.jpg"
+              className="w-full bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--color-on-surface-variant)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <label className="block text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">
@@ -220,6 +254,30 @@ export function ProfileForm({ initialProfile, initialSettings }: ProfileFormProp
               value={form.linkedinUrl}
               onChange={(e) => handleChange("linkedinUrl", e.target.value)}
               placeholder="https://linkedin.com/in/yourname"
+              className="w-full bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--color-on-surface-variant)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">
+              GitHub URL
+            </label>
+            <input
+              type="url"
+              value={form.githubUrl}
+              onChange={(e) => handleChange("githubUrl", e.target.value)}
+              placeholder="https://github.com/yourname"
+              className="w-full bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--color-on-surface-variant)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">
+              Portfolio URL
+            </label>
+            <input
+              type="url"
+              value={form.portfolioUrl}
+              onChange={(e) => handleChange("portfolioUrl", e.target.value)}
+              placeholder="https://yourportfolio.com"
               className="w-full bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--color-on-surface-variant)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
             />
           </div>

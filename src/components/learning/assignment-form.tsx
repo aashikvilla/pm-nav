@@ -2,6 +2,13 @@
 
 import { useState } from "react"
 
+interface AiFeedback {
+  breakdown?: { criterion: string; score: number; maxPoints: number; comment: string }[]
+  overallFeedback?: string
+  strengthAreas?: string[]
+  improvementAreas?: string[]
+}
+
 interface PreviousSubmission {
   id: string
   content: string
@@ -9,6 +16,16 @@ interface PreviousSubmission {
   aiFeedback: string | null
   passed: boolean
   submittedAt: string
+}
+
+function parseFeedback(raw: string | null): AiFeedback | null {
+  if (!raw) return null
+  if (typeof raw === "object") return raw as AiFeedback
+  try {
+    return JSON.parse(raw) as AiFeedback
+  } catch {
+    return null
+  }
 }
 
 interface AssignmentFormProps {
@@ -66,6 +83,110 @@ function ScoreRing({ score }: { score: number }) {
   )
 }
 
+function ChevronIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      className={`w-4 h-4 text-[var(--color-on-surface-variant)] transition-transform ${open ? "rotate-180" : ""}`}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
+
+function AttemptDetail({ a }: { a: PreviousSubmission }) {
+  const [submissionOpen, setSubmissionOpen] = useState(false)
+  const [breakdownOpen, setBreakdownOpen] = useState(false)
+  const feedback = parseFeedback(a.aiFeedback)
+
+  return (
+    <div className="px-4 pb-4 space-y-4">
+      {/* Overall feedback */}
+      {feedback?.overallFeedback && (
+        <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">{feedback.overallFeedback}</p>
+      )}
+
+      {/* Strength areas */}
+      {feedback?.strengthAreas && feedback.strengthAreas.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-xs font-semibold text-[var(--color-on-surface)]">What you did well</p>
+          {feedback.strengthAreas.map((s, i) => (
+            <div key={i} className="flex items-start gap-2 text-sm text-[var(--color-on-surface-variant)]">
+              <span className="text-green-600 mt-0.5 shrink-0">&#10003;</span>
+              {s}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Improvement areas */}
+      {feedback?.improvementAreas && feedback.improvementAreas.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-xs font-semibold text-[var(--color-on-surface)]">Areas to strengthen</p>
+          {feedback.improvementAreas.map((s, i) => (
+            <div key={i} className="flex items-start gap-2 text-sm text-[var(--color-on-surface-variant)]">
+              <span className="text-amber-500 mt-0.5 shrink-0">&#9679;</span>
+              {s}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Collapsible breakdown */}
+      {feedback?.breakdown && feedback.breakdown.length > 0 && (
+        <div>
+          <button
+            onClick={() => setBreakdownOpen((v) => !v)}
+            className="flex items-center gap-1.5 text-xs font-semibold text-[var(--color-on-surface)] mb-2"
+          >
+            <span>Score Breakdown</span>
+            <ChevronIcon open={breakdownOpen} />
+          </button>
+          {breakdownOpen && (
+            <div className="space-y-2">
+              {feedback.breakdown.map((item, i) => (
+                <div
+                  key={i}
+                  className="bg-[var(--color-surface-container-low)] rounded-xl p-3 space-y-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-[var(--color-on-surface)]">{item.criterion}</span>
+                    <span className="text-xs font-semibold text-[var(--color-primary)]">
+                      {item.score}/{item.maxPoints}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--color-on-surface-variant)]">{item.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Collapsible submission content */}
+      <div>
+        <button
+          onClick={() => setSubmissionOpen((v) => !v)}
+          className="flex items-center gap-1.5 text-xs font-semibold text-[var(--color-on-surface)] mb-2"
+        >
+          <span>Your Submission</span>
+          <ChevronIcon open={submissionOpen} />
+        </button>
+        {submissionOpen && (
+          <p className="text-sm text-[var(--color-on-surface)] whitespace-pre-wrap leading-relaxed bg-[var(--color-surface-container-low)] rounded-xl p-3">
+            {a.content}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function PreviousAttempts({ attempts }: { attempts: PreviousSubmission[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
@@ -79,17 +200,7 @@ function PreviousAttempts({ attempts }: { attempts: PreviousSubmission[] }) {
         className="flex items-center gap-2 text-sm font-semibold text-[var(--color-on-surface)]"
       >
         <span>Previous Attempts ({attempts.length})</span>
-        <svg
-          className={`w-4 h-4 text-[var(--color-on-surface-variant)] transition-transform ${open ? "rotate-180" : ""}`}
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <ChevronIcon open={open} />
       </button>
 
       {open && (
@@ -122,26 +233,9 @@ function PreviousAttempts({ attempts }: { attempts: PreviousSubmission[] }) {
                     })}
                   </span>
                 </div>
-                <span className="text-xs text-[var(--color-on-surface-variant)]">
-                  {expandedId === a.id ? "Hide" : "Show"}
-                </span>
+                <ChevronIcon open={expandedId === a.id} />
               </button>
-              {expandedId === a.id && (
-                <div className="px-4 pb-4 space-y-3">
-                  <div>
-                    <p className="text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Your submission:</p>
-                    <p className="text-sm text-[var(--color-on-surface)] whitespace-pre-wrap leading-relaxed">
-                      {a.content}
-                    </p>
-                  </div>
-                  {a.aiFeedback && (
-                    <div>
-                      <p className="text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Feedback:</p>
-                      <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">{a.aiFeedback}</p>
-                    </div>
-                  )}
-                </div>
-              )}
+              {expandedId === a.id && <AttemptDetail a={a} />}
             </div>
           ))}
         </div>
