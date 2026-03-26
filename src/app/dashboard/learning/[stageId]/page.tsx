@@ -134,7 +134,7 @@ export default async function StageDetailPage({
                       key={resource.id}
                       id={resource.id}
                       title={resource.title}
-                      type={resource.type}
+                      type={resource.type as "article" | "video" | "exercise" | "tool"}
                       url={resource.url}
                       estimatedMinutes={resource.estimatedMins}
                       isCompleted={stage.completedIds.has(resource.id)}
@@ -161,7 +161,7 @@ export default async function StageDetailPage({
                         ? {
                             response: lastSubmission.response,
                             aiFeedback: lastSubmission.aiFeedback,
-                            score: lastSubmission.aiScore,
+                            score: null,
                             passed: lastSubmission.passed,
                           }
                         : null
@@ -193,7 +193,7 @@ export default async function StageDetailPage({
               id: s.id,
               content: s.content,
               aiScore: s.aiScore,
-              aiFeedback: s.aiFeedback,
+              aiFeedback: (s.aiFeedback as string) ?? null,
               passed: s.passed,
               submittedAt: s.submittedAt.toISOString(),
             }))}
