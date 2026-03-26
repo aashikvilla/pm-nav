@@ -15,55 +15,62 @@ const openrouter = new OpenAI({
 // Fallback uses a different provider than primary.
 // See docs/spec/model-selection-guide.md for full justification.
 
+// Available free models (verified 2026-03-26):
+// nvidia/nemotron-3-super-120b-a12b:free  — 262K ctx, strong reasoning
+// stepfun/step-3.5-flash:free             — 256K ctx, fast structured output
+// minimax/minimax-m2.5:free               — 196K ctx, good conversational
+// nvidia/nemotron-3-nano-30b-a3b:free     — 256K ctx, lightweight
+// arcee-ai/trinity-large-preview:free     — 131K ctx, general purpose
+
 export const MODEL_CONFIG = {
   resumeParser: {
-    primary: "mistralai/mistral-small-3.1-24b-instruct:free",
-    fallback: "meta-llama/llama-3.3-70b-instruct:free",
-    paid: "openai/gpt-4o-mini",
+    primary: "nvidia/nemotron-3-super-120b-a12b:free",
+    fallback: "stepfun/step-3.5-flash:free",
+    paid: null,
   },
   psiReframer: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
-    fallback: "stepfun/step-3.5-flash:free",
-    paid: "anthropic/claude-sonnet-4-20250514",
+    fallback: "minimax/minimax-m2.5:free",
+    paid: null,
   },
   gapAnalyzer: {
     primary: "stepfun/step-3.5-flash:free",
     fallback: "nvidia/nemotron-3-super-120b-a12b:free",
-    paid: "anthropic/claude-sonnet-4-20250514",
+    paid: null,
   },
   conversationAgent: {
-    primary: "meta-llama/llama-3.3-70b-instruct:free",
-    fallback: "mistralai/mistral-small-3.1-24b-instruct:free",
-    paid: "anthropic/claude-sonnet-4-20250514",
+    primary: "minimax/minimax-m2.5:free",
+    fallback: "nvidia/nemotron-3-super-120b-a12b:free",
+    paid: null,
   },
   proficiencyEvaluator: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
     fallback: "stepfun/step-3.5-flash:free",
-    paid: "anthropic/claude-sonnet-4-20250514",
+    paid: null,
   },
   assignmentEvaluator: {
     primary: "stepfun/step-3.5-flash:free",
     fallback: "nvidia/nemotron-3-super-120b-a12b:free",
-    paid: "anthropic/claude-sonnet-4-20250514",
+    paid: null,
   },
   questionEvaluator: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
     fallback: "stepfun/step-3.5-flash:free",
-    paid: "anthropic/claude-sonnet-4-20250514",
+    paid: null,
   },
   resumeOptimizer: {
-    primary: "qwen/qwen3-next-80b-a3b-instruct:free",
-    fallback: "mistralai/mistral-small-3.1-24b-instruct:free",
-    paid: "openai/gpt-4o-mini",
+    primary: "nvidia/nemotron-3-super-120b-a12b:free",
+    fallback: "minimax/minimax-m2.5:free",
+    paid: null,
   },
   atsScorer: {
-    primary: "mistralai/mistral-small-3.1-24b-instruct:free",
-    fallback: "openai/gpt-oss-20b:free",
+    primary: "stepfun/step-3.5-flash:free",
+    fallback: "nvidia/nemotron-3-nano-30b-a3b:free",
     paid: null,
   },
   learningRecommender: {
-    primary: "openai/gpt-oss-20b:free",
-    fallback: "mistralai/mistral-small-3.1-24b-instruct:free",
+    primary: "arcee-ai/trinity-large-preview:free",
+    fallback: "nvidia/nemotron-3-nano-30b-a3b:free",
     paid: null,
   },
 } as const
@@ -118,8 +125,8 @@ export async function orChat(
       logger.warn(`[OpenRouter] agent=${agentName} model=${model} failed status=${status} msg=${error?.message}`)
       lastError = error
 
-      // Only retry on rate-limit or provider unavailability
-      if (status === 429 || status === 503 || status === 502) continue
+      // Retry on rate-limit, provider unavailability, or invalid model
+      if (status === 429 || status === 503 || status === 502 || status === 400) continue
 
       // Unexpected error — don't try fallbacks
       throw error
