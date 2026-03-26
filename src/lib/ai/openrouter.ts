@@ -30,7 +30,7 @@ export const MODEL_CONFIG = {
   },
   psiReframer: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
-    fallback: "minimax/minimax-m2.5:free",
+    fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
   gapAnalyzer: {
@@ -39,8 +39,8 @@ export const MODEL_CONFIG = {
     paid: null,
   },
   conversationAgent: {
-    primary: "minimax/minimax-m2.5:free",
-    fallback: "nvidia/nemotron-3-super-120b-a12b:free",
+    primary: "nvidia/nemotron-3-super-120b-a12b:free",
+    fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
   proficiencyEvaluator: {
@@ -60,7 +60,7 @@ export const MODEL_CONFIG = {
   },
   resumeOptimizer: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
-    fallback: "minimax/minimax-m2.5:free",
+    fallback: "arcee-ai/trinity-large-preview:free",
     paid: null,
   },
   atsScorer: {
@@ -126,7 +126,7 @@ export async function orChat(
       lastError = error
 
       // Retry on rate-limit, provider unavailability, or invalid model
-      if (status === 429 || status === 503 || status === 502 || status === 400) continue
+      if (status === 429 || status === 503 || status === 502 || status === 400 || status === 404) continue
 
       // Unexpected error — don't try fallbacks
       throw error
