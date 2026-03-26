@@ -5,9 +5,25 @@
  * Seeds: skill categories, skills, role weights, learning stages, question bank
  */
 
+import { readFileSync } from "fs"
+import { resolve } from "path"
 import { PrismaClient } from "../src/generated/prisma/client"
+import { PrismaPg } from "@prisma/adapter-pg"
 
-const prisma = new PrismaClient()
+// Load .env manually (Next.js does this automatically but seed runs standalone)
+try {
+  const envPath = resolve(__dirname, "../.env")
+  const envContent = readFileSync(envPath, "utf-8")
+  for (const line of envContent.split("\n")) {
+    const match = line.match(/^([^#=]+)=(.*)$/)
+    if (match && !process.env[match[1].trim()]) {
+      process.env[match[1].trim()] = match[2].trim().replace(/^["']|["']$/g, "")
+    }
+  }
+} catch { /* .env may not exist */ }
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log("Seeding skill categories...")
