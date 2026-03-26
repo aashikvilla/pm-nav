@@ -166,32 +166,42 @@ export async function POST(req: NextRequest) {
           skillsHinted: [],
         }))
 
+    logger.info("[Analyze] Calling gap analysis", { userId, effectivePsiCount: effectivePsiEntries.length, targetRole: gapInput.targetRoleType })
     const gapResult = await analyzeGaps({ ...gapInput, psiEntries: effectivePsiEntries })
+    logger.info("[Analyze] Gap analysis returned", { userId, skillSlugs: Object.keys(gapResult.skillScores), topStrengths: gapResult.topStrengths, topGaps: gapResult.topGaps })
 
     // Upsert skill scores
+    const matchedSlugs: string[] = []
+    const unmatchedSlugs: string[] = []
     const skillScoreOps = Object.entries(gapResult.skillScores).map(([slug, score]) => {
       const skill = skillBySlug.get(slug)
-      if (!skill) return null
+      if (!skill) { unmatchedSlugs.push(slug); return null }
+      matchedSlugs.push(slug)
       return prisma.userSkillScore.upsert({
         where: { userId_skillId: { userId, skillId: skill.id } },
         create: { userId, skillId: skill.id, evidenceScore: score, totalScore: score * 0.5 },
         update: { evidenceScore: score, totalScore: score * 0.5 },
       })
     })
+    logger.info("[Analyze] Skill score upsert", { userId, matched: matchedSlugs, unmatched: unmatchedSlugs, opsCount: skillScoreOps.filter(Boolean).length })
     await Promise.all(skillScoreOps.filter(Boolean))
+    logger.info("[Analyze] Skill scores saved", { userId })
 
     // Calculate and store readiness score snapshot
     const allSkillScores = await prisma.userSkillScore.findMany({
       where: { userId },
       select: { skillId: true, evidenceScore: true, assignmentScore: true, learningScore: true },
     })
+    const roleType = pmTarget?.targetRoleType ?? "consumer"
     const roleWeights = await prisma.roleWeight.findMany({
-      where: { roleType: pmTarget?.targetRoleType ?? "consumer" },
+      where: { roleType },
       select: { categoryId: true, weight: true },
     })
+    logger.info("[Analyze] Readiness calc inputs", { userId, skillScoreCount: allSkillScores.length, roleWeightCount: roleWeights.length, roleType })
 
     const categoryScores = calculateCategoryScores(allSkillScores, skills)
     const overallScore = calculateReadinessScore(categoryScores, roleWeights)
+    logger.info("[Analyze] Readiness calculated", { userId, categoryScores, overallScore })
 
     // Get category names for the snapshot
     const categories = await prisma.skillCategory.findMany({ select: { id: true, slug: true } })
@@ -201,12 +211,13 @@ export async function POST(req: NextRequest) {
         categoryScoresBySlug[cat.slug] = categoryScores[cat.id]
       }
     }
+    logger.info("[Analyze] Creating readiness snapshot", { userId, overallScore, roleType, categoryScoresBySlug })
 
     await prisma.readinessScoreSnapshot.create({
       data: {
         userId,
         overallScore,
-        roleType: pmTarget?.targetRoleType ?? "consumer",
+        roleType,
         categoryScores: categoryScoresBySlug,
       },
     })
@@ -231,7 +242,9 @@ export async function POST(req: NextRequest) {
       analysisComplete: true,
     })
   } catch (error) {
-    logger.error("Analysis failed", { userId, error })
+    const errMsg = error instanceof Error ? error.message : String(error)
+    const errStack = error instanceof Error ? error.stack : undefined
+    logger.error("[Analyze] FAILED", { userId, error: errMsg, stack: errStack })
     await prisma.profile
       .update({ where: { userId }, data: { analysisStatus: "failed" } })
       .catch(() => null)

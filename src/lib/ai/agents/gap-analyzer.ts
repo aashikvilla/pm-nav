@@ -3,6 +3,7 @@
 // has 256K context and ranks highly on structured analytical tasks. Using StepFun here (vs
 // DeepSeek for PSI) spreads rate limits across providers.
 import { orChat } from "@/lib/ai/openrouter"
+import { logger } from "@/lib/logger"
 
 interface GapAnalysisInput {
   psiEntries: { problem: string; solution: string; impact: string; skillsHinted: string[] }[]
@@ -47,12 +48,19 @@ Return JSON: {"skillScores":{"slug":number},"topStrengths":string[],"topGaps":st
     jsonMode: true,
   })
 
+  logger.info("[GapAnalyzer] Raw response", { chars: response.length, preview: response.slice(0, 300) })
+
   try {
     const codeBlock = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
     const objectMatch = response.match(/\{[\s\S]*\}/)
     const jsonStr = codeBlock ? codeBlock[1] : objectMatch ? objectMatch[0] : response.trim()
-    return JSON.parse(jsonStr) as GapAnalysisResult
-  } catch {
+    logger.info("[GapAnalyzer] Parsing JSON", { method: codeBlock ? "codeBlock" : objectMatch ? "objectMatch" : "raw", jsonPreview: jsonStr.slice(0, 200) })
+    const parsed = JSON.parse(jsonStr) as GapAnalysisResult
+    logger.info("[GapAnalyzer] Parsed OK", { skillSlugs: Object.keys(parsed.skillScores ?? {}), hasStrengths: !!parsed.topStrengths, hasGaps: !!parsed.topGaps })
+    return parsed
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    logger.error("[GapAnalyzer] JSON parse failed", { error: msg, responsePreview: response.slice(0, 500) })
     throw new Error("Failed to parse gap analysis JSON: " + response.slice(0, 200))
   }
 }
