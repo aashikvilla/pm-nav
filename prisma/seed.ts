@@ -119,6 +119,49 @@ async function main() {
   }
   console.log(`  ✓ ${stages.length} learning stages`)
 
+  // ─── Content seed (subtopics, resources, gate assignments, questions) ────
+  const { subtopicDefs, resourceDefs, gateAssignmentDefs, questionDefs } = await import("./seed-content")
+
+  console.log("Seeding subtopics...")
+  for (const st of subtopicDefs) {
+    await prisma.stageSubtopic.upsert({
+      where: { stageId_slug: { stageId: st.stageId, slug: st.slug } },
+      update: {},
+      create: st,
+    })
+  }
+  console.log(`  ✓ ${subtopicDefs.length} subtopics`)
+
+  console.log("Seeding resources...")
+  for (const r of resourceDefs) {
+    await prisma.resource.upsert({
+      where: { id: r.id },
+      update: {},
+      create: r,
+    })
+  }
+  console.log(`  ✓ ${resourceDefs.length} resources`)
+
+  console.log("Seeding gate assignments...")
+  for (const ga of gateAssignmentDefs) {
+    await prisma.learningGateAssignment.upsert({
+      where: { id: ga.id },
+      update: {},
+      create: ga,
+    })
+  }
+  console.log(`  ✓ ${gateAssignmentDefs.length} gate assignments`)
+
+  console.log("Seeding question bank...")
+  for (const q of questionDefs) {
+    await prisma.questionBank.upsert({
+      where: { id: q.id },
+      update: {},
+      create: q,
+    })
+  }
+  console.log(`  ✓ ${questionDefs.length} questions`)
+
   console.log("Seed complete ✓")
 }
 
