@@ -49,17 +49,17 @@ export default async function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
+              href="/discover"
+              className="bg-[var(--color-secondary-fixed)] text-[var(--color-on-surface)] px-8 py-4 rounded-full font-semibold text-lg hover:opacity-90 transition-opacity"
+            >
+              Take the Discovery Quiz
+            </Link>
+            <Link
               href="/signup"
               className="bg-[var(--color-primary)] text-white px-8 py-4 rounded-full font-semibold text-lg hover:opacity-90 transition-opacity"
             >
-              Start Your Strategy
+              Get Started
             </Link>
-            <a
-              href="#how-it-works"
-              className="bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface-variant)] border border-[var(--color-outline-variant)]/20 px-8 py-4 rounded-full font-semibold text-lg hover:bg-[var(--color-surface-container-low)] transition-colors"
-            >
-              How it works
-            </a>
           </div>
         </section>
 
