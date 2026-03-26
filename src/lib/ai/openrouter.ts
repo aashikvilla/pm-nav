@@ -16,61 +16,71 @@ const openrouter = new OpenAI({
 // See docs/spec/model-selection-guide.md for full justification.
 
 // Available free models (verified 2026-03-26):
-// nvidia/nemotron-3-super-120b-a12b:free  — 262K ctx, strong reasoning
-// stepfun/step-3.5-flash:free             — 256K ctx, fast structured output
-// minimax/minimax-m2.5:free               — 196K ctx, good conversational
-// nvidia/nemotron-3-nano-30b-a3b:free     — 256K ctx, lightweight
-// arcee-ai/trinity-large-preview:free     — 131K ctx, general purpose
+// nvidia/nemotron-3-super-120b-a12b:free  — 120B, 262K ctx, strongest reasoning/analysis
+// minimax/minimax-m2.5:free               — 196K ctx, best conversational/empathetic tone
+// stepfun/step-3.5-flash:free             — 256K ctx, fast structured JSON output
+// arcee-ai/trinity-large-preview:free     — 131K ctx, solid general purpose
+// nvidia/nemotron-3-nano-30b-a3b:free     — 30B, 256K ctx, lightweight fast tasks
 
 export const MODEL_CONFIG = {
+  // Structured JSON extraction from messy resume text — needs strong reasoning
   resumeParser: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
     fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
+  // Hardest task: contextual inference + PM-lens creative rewriting
   psiReframer: {
+    primary: "nvidia/nemotron-3-super-120b-a12b:free",
+    fallback: "minimax/minimax-m2.5:free",
+    paid: null,
+  },
+  // Analytical scoring across skill taxonomy — needs calibrated reasoning
+  gapAnalyzer: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
     fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
-  gapAnalyzer: {
-    primary: "stepfun/step-3.5-flash:free",
+  // Empathetic conversation with career switchers — warmth + follow-up questions
+  conversationAgent: {
+    primary: "minimax/minimax-m2.5:free",
     fallback: "nvidia/nemotron-3-super-120b-a12b:free",
     paid: null,
   },
-  conversationAgent: {
-    primary: "nvidia/nemotron-3-super-120b-a12b:free",
-    fallback: "stepfun/step-3.5-flash:free",
-    paid: null,
-  },
+  // Quick check evaluation — balanced reasoning + structured output
   proficiencyEvaluator: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
     fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
+  // Detailed rubric-based assignment scoring — needs deep analysis
   assignmentEvaluator: {
-    primary: "stepfun/step-3.5-flash:free",
-    fallback: "nvidia/nemotron-3-super-120b-a12b:free",
-    paid: null,
-  },
-  questionEvaluator: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
     fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
-  resumeOptimizer: {
+  // PM interview question evaluation — analytical + encouraging feedback
+  questionEvaluator: {
     primary: "nvidia/nemotron-3-super-120b-a12b:free",
-    fallback: "arcee-ai/trinity-large-preview:free",
+    fallback: "minimax/minimax-m2.5:free",
     paid: null,
   },
+  // Creative rewriting + keyword optimization — needs strong language ability
+  resumeOptimizer: {
+    primary: "nvidia/nemotron-3-super-120b-a12b:free",
+    fallback: "minimax/minimax-m2.5:free",
+    paid: null,
+  },
+  // Keyword extraction from JDs — focused NLP, speed matters
   atsScorer: {
     primary: "stepfun/step-3.5-flash:free",
     fallback: "nvidia/nemotron-3-nano-30b-a3b:free",
     paid: null,
   },
+  // Learning resource recommendations — general purpose
   learningRecommender: {
     primary: "arcee-ai/trinity-large-preview:free",
-    fallback: "nvidia/nemotron-3-nano-30b-a3b:free",
+    fallback: "stepfun/step-3.5-flash:free",
     paid: null,
   },
 } as const
