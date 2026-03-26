@@ -67,6 +67,10 @@ model User {
   streak              UserStreak?
   conversationSessions ConversationSession[]
   applicationTracker  ApplicationTracker[]
+  education           Education[]
+  projects            Project[]
+  certifications      Certification[]
+  achievements        Achievement[]
 
   @@map("users")
 }
@@ -389,6 +393,7 @@ model AssignmentSubmission {
 
   user       User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   assignment LearningGateAssignment @relation(fields: [assignmentId], references: [id])
+  project    Project?
 
   @@map("assignment_submissions")
 }
@@ -473,8 +478,13 @@ model PublicProfileSettings {
   showPsiEntries    Boolean  @default(true) @map("show_psi_entries")
   showAssignments   Boolean  @default(true) @map("show_assignments")
   showActivityGraph Boolean  @default(true) @map("show_activity_graph")
-  showStreak        Boolean  @default(true) @map("show_streak")
-  verificationBadge Boolean  @default(false) @map("verification_badge")
+  showStreak          Boolean  @default(true) @map("show_streak")
+  showWorkExperience  Boolean  @default(true) @map("show_work_experience")
+  showEducation       Boolean  @default(true) @map("show_education")
+  showProjects        Boolean  @default(true) @map("show_projects")
+  showCertifications  Boolean  @default(true) @map("show_certifications")
+  showAchievements    Boolean  @default(true) @map("show_achievements")
+  verificationBadge   Boolean  @default(false) @map("verification_badge")
   updatedAt         DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -561,4 +571,89 @@ model ApplicationTracker {
   jd   JobDescription? @relation(fields: [jdId], references: [id])
 
   @@map("application_tracker")
+}
+
+// ─── Master Profile: Education ─────────────────────────────────────────────────
+
+model Education {
+  id           String    @id @default(cuid())
+  userId       String    @map("user_id")
+  school       String
+  degree       String?
+  fieldOfStudy String?   @map("field_of_study")
+  startDate    DateTime? @map("start_date")
+  endDate      DateTime? @map("end_date")
+  gpa          String?
+  description  String?   @db.Text
+  isVisible    Boolean   @default(true) @map("is_visible")
+  sortOrder    Int       @default(0) @map("sort_order")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("education")
+}
+
+// ─── Master Profile: Projects ──────────────────────────────────────────────────
+
+model Project {
+  id                     String    @id @default(cuid())
+  userId                 String    @map("user_id")
+  title                  String
+  description            String?   @db.Text
+  url                    String?
+  imageUrl               String?   @map("image_url")
+  tags                   String[]
+  startDate              DateTime? @map("start_date")
+  endDate                DateTime? @map("end_date")
+  isFromAssignment       Boolean   @default(false) @map("is_from_assignment")
+  assignmentSubmissionId String?   @unique @map("assignment_submission_id")
+  isVisible              Boolean   @default(true) @map("is_visible")
+  sortOrder              Int       @default(0) @map("sort_order")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignmentSubmission AssignmentSubmission?  @relation(fields: [assignmentSubmissionId], references: [id])
+
+  @@map("projects")
+}
+
+// ─── Master Profile: Certifications ────────────────────────────────────────────
+
+model Certification {
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  name           String
+  issuer         String?
+  issueDate      DateTime? @map("issue_date")
+  expirationDate DateTime? @map("expiration_date")
+  credentialUrl  String?   @map("credential_url")
+  isVisible      Boolean   @default(true) @map("is_visible")
+  sortOrder      Int       @default(0) @map("sort_order")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("certifications")
+}
+
+// ─── Master Profile: Achievements ──────────────────────────────────────────────
+
+model Achievement {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  title       String
+  description String?   @db.Text
+  date        DateTime?
+  isVisible   Boolean   @default(true) @map("is_visible")
+  sortOrder   Int       @default(0) @map("sort_order")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("achievements")
 }
