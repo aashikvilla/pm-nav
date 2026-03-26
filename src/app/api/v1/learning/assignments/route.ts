@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // If passed, mark stage as completed and ensure next stage progress exists
+    // If passed, mark stage as completed, update skill scores, unlock next stage
     if (evaluation.passed) {
       const stageId = assignment.stageId
       await prisma.userLearningProgress.upsert({
@@ -79,6 +79,40 @@ export async function POST(req: NextRequest) {
         create: { userId, stageId, status: "completed", completedAt: new Date(), startedAt: new Date() },
         update: { status: "completed", completedAt: new Date() },
       })
+
+      // Boost learningScore for skills in this stage's categories
+      const stageCategorySlugs = assignment.stage.skillCategories
+      if (stageCategorySlugs.length > 0) {
+        const categories = await prisma.skillCategory.findMany({
+          where: { slug: { in: stageCategorySlugs } },
+          select: { id: true },
+        })
+        const categoryIds = categories.map((c) => c.id)
+
+        const skills = await prisma.skill.findMany({
+          where: { categoryId: { in: categoryIds } },
+          select: { id: true },
+        })
+
+        // Boost: assignment score adds to learningScore, recalculate totalScore
+        const scoreBoost = Math.round((evaluation.totalScore / assignment.maxScore) * 100)
+        for (const skill of skills) {
+          const existing = await prisma.userSkillScore.findUnique({
+            where: { userId_skillId: { userId, skillId: skill.id } },
+          })
+          const newLearning = Math.min(100, (existing?.learningScore ?? 0) + scoreBoost * 0.3)
+          const newAssignment = Math.max(existing?.assignmentScore ?? 0, scoreBoost)
+          const evidence = existing?.evidenceScore ?? 0
+          const newTotal = 0.5 * evidence + 0.3 * newAssignment + 0.2 * newLearning
+
+          await prisma.userSkillScore.upsert({
+            where: { userId_skillId: { userId, skillId: skill.id } },
+            create: { userId, skillId: skill.id, evidenceScore: 0, assignmentScore: newAssignment, learningScore: newLearning, totalScore: newTotal },
+            update: { assignmentScore: newAssignment, learningScore: newLearning, totalScore: newTotal },
+          })
+        }
+        logger.info("Skill scores updated from assignment", { userId, stageId, categorySlugs: stageCategorySlugs, skillCount: skills.length, scoreBoost })
+      }
 
       // Unlock next stage
       const nextStage = await prisma.learningStage.findFirst({

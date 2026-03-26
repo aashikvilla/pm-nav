@@ -54,6 +54,34 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    // Boost learningScore for skills in this stage's categories
+    const stageCategorySlugs = resource.subtopic.stage.skillCategories
+    if (stageCategorySlugs.length > 0) {
+      const categories = await prisma.skillCategory.findMany({
+        where: { slug: { in: stageCategorySlugs } },
+        select: { id: true },
+      })
+      const skills = await prisma.skill.findMany({
+        where: { categoryId: { in: categories.map((c) => c.id) } },
+        select: { id: true },
+      })
+      // Small incremental boost per resource completed
+      for (const skill of skills) {
+        const existing = await prisma.userSkillScore.findUnique({
+          where: { userId_skillId: { userId, skillId: skill.id } },
+        })
+        const newLearning = Math.min(100, (existing?.learningScore ?? 0) + 2)
+        const evidence = existing?.evidenceScore ?? 0
+        const assignment = existing?.assignmentScore ?? 0
+        const newTotal = 0.5 * evidence + 0.3 * assignment + 0.2 * newLearning
+        await prisma.userSkillScore.upsert({
+          where: { userId_skillId: { userId, skillId: skill.id } },
+          create: { userId, skillId: skill.id, evidenceScore: 0, assignmentScore: 0, learningScore: newLearning, totalScore: newTotal },
+          update: { learningScore: newLearning, totalScore: newTotal },
+        })
+      }
+    }
+
     // Log activity and update streak
     await recordActivity(userId, "resource_completed", resourceId, "resource")
 
