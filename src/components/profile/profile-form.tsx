@@ -21,6 +21,11 @@ interface Settings {
   showAssignments: boolean
   showActivityGraph: boolean
   showStreak: boolean
+  showWorkExperience: boolean
+  showEducation: boolean
+  showProjects: boolean
+  showCertifications: boolean
+  showAchievements: boolean
 }
 
 interface ProfileFormProps {
@@ -34,6 +39,11 @@ const DEFAULT_SETTINGS: Settings = {
   showAssignments: true,
   showActivityGraph: true,
   showStreak: true,
+  showWorkExperience: true,
+  showEducation: true,
+  showProjects: true,
+  showCertifications: true,
+  showAchievements: true,
 }
 
 function Toggle({
@@ -348,6 +358,36 @@ export function ProfileForm({ initialProfile, initialSettings }: ProfileFormProp
             onChange={(v) => setSettings((s) => ({ ...s, showAssignments: v }))}
             label="Learning Progress"
             description="Show completed learning stages"
+          />
+          <Toggle
+            checked={settings.showWorkExperience}
+            onChange={(v) => setSettings((s) => ({ ...s, showWorkExperience: v }))}
+            label="Work Experience"
+            description="Show your work history"
+          />
+          <Toggle
+            checked={settings.showEducation}
+            onChange={(v) => setSettings((s) => ({ ...s, showEducation: v }))}
+            label="Education"
+            description="Show your education entries"
+          />
+          <Toggle
+            checked={settings.showProjects}
+            onChange={(v) => setSettings((s) => ({ ...s, showProjects: v }))}
+            label="Projects"
+            description="Show your projects and case studies"
+          />
+          <Toggle
+            checked={settings.showCertifications}
+            onChange={(v) => setSettings((s) => ({ ...s, showCertifications: v }))}
+            label="Certifications"
+            description="Show your certifications and credentials"
+          />
+          <Toggle
+            checked={settings.showAchievements}
+            onChange={(v) => setSettings((s) => ({ ...s, showAchievements: v }))}
+            label="Achievements"
+            description="Show your achievements and milestones"
           />
         </div>
       </div>

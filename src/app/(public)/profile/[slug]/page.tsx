@@ -32,6 +32,22 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           },
           questionAttempts: { select: { id: true } },
           assignmentSubmissions: { where: { passed: true }, select: { id: true } },
+          education: {
+            where: { isVisible: true },
+            orderBy: { endDate: "desc" },
+          },
+          projects: {
+            where: { isVisible: true },
+            orderBy: { sortOrder: "asc" },
+          },
+          certifications: {
+            where: { isVisible: true },
+            orderBy: { sortOrder: "asc" },
+          },
+          achievements: {
+            where: { isVisible: true },
+            orderBy: { sortOrder: "asc" },
+          },
         },
       },
     },
@@ -301,7 +317,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               )}
 
               {/* Work Experience */}
-              {user.workExperiences.length > 0 && (
+              {(settings?.showWorkExperience !== false) && user.workExperiences.length > 0 && (
                 <div>
                   <h2 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-4">
                     Experience
@@ -326,6 +342,121 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                         {wx.description && (
                           <p className="text-sm text-[var(--color-on-surface-variant)] mt-2 leading-relaxed line-clamp-3">
                             {wx.description}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {/* Projects */}
+              {(settings?.showProjects !== false) && user.projects.length > 0 && (
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-4">
+                    Projects
+                  </h2>
+                  <div className="space-y-3">
+                    {user.projects.map((p) => (
+                      <div key={p.id} className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 shadow-[var(--shadow-ambient)]">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-[var(--color-on-surface)]">{p.title}</p>
+                            {p.isFromAssignment && (
+                              <span className="text-xs text-[var(--color-primary)] font-medium">Case Study</span>
+                            )}
+                          </div>
+                          {p.url && (
+                            <a href={p.url} target="_blank" rel="noreferrer" className="text-xs text-[var(--color-primary)] hover:underline flex-shrink-0">
+                              View →
+                            </a>
+                          )}
+                        </div>
+                        {p.description && (
+                          <p className="text-sm text-[var(--color-on-surface-variant)] mt-2 leading-relaxed line-clamp-3">{p.description}</p>
+                        )}
+                        {p.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-3">
+                            {p.tags.map((tag) => (
+                              <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-primary)]/8 text-[var(--color-primary)]">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Education */}
+              {(settings?.showEducation !== false) && user.education.length > 0 && (
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-4">
+                    Education
+                  </h2>
+                  <div className="space-y-3">
+                    {user.education.map((ed) => (
+                      <div key={ed.id} className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 shadow-[var(--shadow-ambient)]">
+                        <p className="text-sm font-semibold text-[var(--color-on-surface)]">{ed.school}</p>
+                        <p className="text-sm text-[var(--color-on-surface-variant)]">
+                          {[ed.degree, ed.fieldOfStudy].filter(Boolean).join(" in ")}
+                          {ed.gpa && <span> · GPA: {ed.gpa}</span>}
+                        </p>
+                        {ed.startDate && (
+                          <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
+                            {new Date(ed.startDate).getFullYear()} — {ed.endDate ? new Date(ed.endDate).getFullYear() : "Present"}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Certifications */}
+              {(settings?.showCertifications !== false) && user.certifications.length > 0 && (
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-4">
+                    Certifications
+                  </h2>
+                  <div className="space-y-3">
+                    {user.certifications.map((c) => (
+                      <div key={c.id} className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 shadow-[var(--shadow-ambient)] flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-[var(--color-on-surface)]">{c.name}</p>
+                          {c.issuer && <p className="text-sm text-[var(--color-on-surface-variant)]">{c.issuer}</p>}
+                          {c.issueDate && (
+                            <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
+                              Issued {new Date(c.issueDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                            </p>
+                          )}
+                        </div>
+                        {c.credentialUrl && (
+                          <a href={c.credentialUrl} target="_blank" rel="noreferrer" className="text-xs text-[var(--color-primary)] hover:underline flex-shrink-0">
+                            Verify →
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Achievements */}
+              {(settings?.showAchievements !== false) && user.achievements.length > 0 && (
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-4">
+                    Achievements
+                  </h2>
+                  <div className="space-y-3">
+                    {user.achievements.map((a) => (
+                      <div key={a.id} className="bg-[var(--color-surface-container-lowest)] rounded-2xl p-5 shadow-[var(--shadow-ambient)]">
+                        <p className="text-sm font-semibold text-[var(--color-on-surface)]">{a.title}</p>
+                        {a.description && (
+                          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1 leading-relaxed">{a.description}</p>
+                        )}
+                        {a.date && (
+                          <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
+                            {new Date(a.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
                           </p>
                         )}
                       </div>

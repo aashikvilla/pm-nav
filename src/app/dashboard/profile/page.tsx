@@ -47,6 +47,11 @@ export default async function ProfilePage() {
                 showAssignments: settings.showAssignments,
                 showActivityGraph: settings.showActivityGraph,
                 showStreak: settings.showStreak,
+                showWorkExperience: settings.showWorkExperience,
+                showEducation: settings.showEducation,
+                showProjects: settings.showProjects,
+                showCertifications: settings.showCertifications,
+                showAchievements: settings.showAchievements,
               }
             : null
         }

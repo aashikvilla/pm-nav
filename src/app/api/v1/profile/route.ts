@@ -28,6 +28,11 @@ const UpdateProfileSchema = z.object({
   showAssignments: z.boolean().optional(),
   showActivityGraph: z.boolean().optional(),
   showStreak: z.boolean().optional(),
+  showWorkExperience: z.boolean().optional(),
+  showEducation: z.boolean().optional(),
+  showProjects: z.boolean().optional(),
+  showCertifications: z.boolean().optional(),
+  showAchievements: z.boolean().optional(),
   isPublic: z.boolean().optional(),
 })
 
@@ -81,6 +86,11 @@ export async function PUT(req: NextRequest) {
       showAssignments,
       showActivityGraph,
       showStreak,
+      showWorkExperience,
+      showEducation,
+      showProjects,
+      showCertifications,
+      showAchievements,
       isPublic,
     } = parsed.data
 
@@ -119,6 +129,11 @@ export async function PUT(req: NextRequest) {
     if (showAssignments !== undefined) settingsData.showAssignments = showAssignments
     if (showActivityGraph !== undefined) settingsData.showActivityGraph = showActivityGraph
     if (showStreak !== undefined) settingsData.showStreak = showStreak
+    if (showWorkExperience !== undefined) settingsData.showWorkExperience = showWorkExperience
+    if (showEducation !== undefined) settingsData.showEducation = showEducation
+    if (showProjects !== undefined) settingsData.showProjects = showProjects
+    if (showCertifications !== undefined) settingsData.showCertifications = showCertifications
+    if (showAchievements !== undefined) settingsData.showAchievements = showAchievements
     // isPublic lives on Profile model as onboardingCompleted check — we store it in profileSettings via verificationBadge proxy
     // Actually there's no isPublic on Profile or PublicProfileSettings in schema, so we skip it here
     // (the profile is effectively "public" when profileSlug is set)
