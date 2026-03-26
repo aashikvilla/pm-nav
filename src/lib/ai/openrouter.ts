@@ -103,6 +103,14 @@ export async function orChat(
       })
 
       const content = response.choices[0]?.message?.content ?? ""
+
+      // Empty response = model didn't produce output; try fallback
+      if (!content.trim()) {
+        logger.warn(`[OpenRouter] agent=${agentName} model=${model} returned empty response, trying next`)
+        lastError = new Error(`Empty response from ${model}`)
+        continue
+      }
+
       logger.info(`[OpenRouter] Success agent=${agentName} model=${model} chars=${content.length}`)
       return content
     } catch (error: any) {
