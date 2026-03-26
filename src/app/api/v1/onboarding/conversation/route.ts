@@ -10,7 +10,7 @@ import { recordActivity } from "@/lib/streak"
 import { logger } from "@/lib/logger"
 
 const ConversationSchema = z.object({
-  sessionId: z.string().optional(),
+  sessionId: z.string().nullish(),
   message: z.string().min(1).max(2000),
 })
 
