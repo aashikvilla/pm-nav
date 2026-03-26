@@ -97,7 +97,7 @@ export async function orChat(
       const response = await openrouter.chat.completions.create({
         model,
         messages: [{ role: "system", content: systemPrompt }, ...messages],
-        max_tokens: opts?.maxTokens ?? 2048,
+        max_tokens: opts?.maxTokens ?? 4096,
         temperature: opts?.temperature ?? 0.3,
         ...(opts?.jsonMode ? { response_format: { type: "json_object" } } : {}),
       })

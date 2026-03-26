@@ -43,7 +43,7 @@ ${entriesSummary}
 Return JSON: {"skillScores":{"slug":number},"topStrengths":string[],"topGaps":string[],"summary":string,"recommendedStages":number[]}`
 
   const response = await orChat("gapAnalyzer", SYSTEM_PROMPT, [{ role: "user", content: prompt }], {
-    maxTokens: 1024,
+    maxTokens: 4096,
     jsonMode: true,
   })
 

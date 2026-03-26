@@ -54,7 +54,7 @@ export async function reframeBatch(bullets: WorkBullet[]): Promise<PsiResult[]> 
         content: `Reframe these ${bullets.length} work experiences into PSI format.\n\n${prompt}\n\nReturn JSON array with ${bullets.length} objects, one per entry in order:\n[{"problem":string,"solution":string,"impact":string,"confidenceScore":number,"skillsHinted":string[]},...]`,
       },
     ],
-    { maxTokens: 300 * bullets.length },
+    { maxTokens: Math.max(4096, 500 * bullets.length) },
   )
 
   try {
